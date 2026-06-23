@@ -576,258 +576,27 @@
 <!-- CONFETTI CANVAS -->
 <canvas id="confetti-canvas" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;"></canvas>
 
-<!-- FLIPBOOK MODAL -->
-<div id="flipbook-modal" style="display:none;position:fixed;inset:0;z-index:997;background:var(--bg);overflow-y:auto;">
-
+<!-- FLIPBOOK MODAL (vertical scroll reader) -->
+<div id="flipbook-modal" style="display:none;position:fixed;inset:0;z-index:997;background:#0a0a0a;">
   <!-- Header -->
-  <div style="background:rgba(15,29,46,0.96);backdrop-filter:blur(12px);padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;">
+  <div style="background:rgba(15,29,46,0.98);backdrop-filter:blur(12px);padding:14px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;">
     <button onclick="closeFlipbook()" style="width:36px;height:36px;border-radius:10px;background:var(--surface);border:none;color:var(--text2);font-size:20px;cursor:pointer;">←</button>
-    <div>
-      <div style="font-size:16px;font-weight:700;">📖 পবিত্রতার পথে</div>
-      <div style="font-size:11px;color:var(--text3);font-family:var(--font-ui);">মাস্টার কন্ট্রোল • ৪৬ পেজ</div>
+    <div style="flex:1;">
+      <div style="font-size:16px;font-weight:700;" id="fb-modal-title">📖 বই</div>
+      <div style="font-size:11px;color:var(--text3);font-family:var(--font-ui);">উপর-নিচে স্ক্রোল করে পড়ুন</div>
     </div>
+    <div style="background:rgba(99,102,241,0.15);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--font-ui);" id="fb-page-num">লোড হচ্ছে...</div>
   </div>
-
-  <!-- Book Info Hero -->
-  <div style="margin:16px;padding:20px;border-radius:18px;position:relative;overflow:hidden;border:1px solid rgba(99,102,241,0.25);">
-    <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,0.14),rgba(139,92,246,0.08));"></div>
-    <div style="position:relative;">
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--gold);font-family:var(--font-ui);margin-bottom:10px;">📚 প্রিমিয়াম বই</div>
-      <div style="font-size:20px;font-weight:800;line-height:1.25;margin-bottom:6px;">মাস্টার কন্ট্রোল<br><span style="color:var(--gold);">পবিত্রতার পথে</span></div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px;">আত্মিক শক্তি, আত্মনিয়ন্ত্রণ ও নতুন জীবনের এক যাত্রা — দুই বই ও সম্পূর্ণ অ্যাপসহ কম্বো প্যাকেজে।</div>
-      <div style="display:flex;gap:16px;">
-        <span style="font-size:12px;color:var(--text3);font-family:var(--font-ui);"><strong style="color:var(--text2);">৪৬</strong> পেজ</span>
-        <span style="font-size:12px;color:var(--text3);font-family:var(--font-ui);"><strong style="color:var(--gold);">৫০০ টাকা কম্বোতে</strong></span>
-        <span style="font-size:12px;color:var(--text3);font-family:var(--font-ui);">বাংলা ভাষা</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Flipbook Preview -->
-  <div style="padding:0 16px 20px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div style="font-size:13px;color:var(--text3);font-family:var(--font-ui);">🔓 বিনামূল্যে প্রিভিউ (৫ পেজ)</div>
-      <div style="background:rgba(99,102,241,0.15);color:var(--accent);padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--font-ui);" id="fb-page-num">১ / ৫</div>
-    </div>
-
-    <!-- Book Page -->
-    <div style="position:relative;border-radius:14px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5);background:#000;cursor:pointer;"
-      id="fb-flip-wrap">
-      <div id="fb-flip-inner" style="transform-style:preserve-3d;transition:transform 0.5s ease;">
-        <img id="fb-img" src="" alt="বইয়ের পেজ" style="width:100%;display:block;">
-      </div>
-      <!-- Corner fold -->
-      <div style="position:absolute;bottom:0;right:0;width:40px;height:40px;background:linear-gradient(225deg,rgba(99,102,241,0.4) 40%,transparent 40%);pointer-events:none;border-radius:0 0 14px 0;"></div>
-    </div>
-
-    <!-- Controls -->
-    <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px;">
-      <button id="fb-prev" onclick="fbChangePage(-1)"
-        style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;"
-        disabled>‹</button>
-      <div id="fb-dots" style="display:flex;align-items:center;gap:4px;"></div>
-      <button id="fb-next" onclick="fbChangePage(1)"
-        style="width:44px;height:44px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text2);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;">›</button>
-    </div>
-    <div style="text-align:center;font-size:11px;color:var(--text3);font-family:var(--font-ui);margin-top:8px;">← সোয়াইপ করুন অথবা বাটন চাপুন →</div>
-  </div>
-
-  <!-- Locked Blur Preview -->
-  <div id="fb-lock-preview" style="margin:0 16px 16px;border-radius:14px;overflow:hidden;position:relative;">
-    <img id="fb-blur-img" src="" style="width:100%;display:block;filter:blur(8px) brightness(0.35);">
-    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;">
-      <div style="font-size:44px;">🔒</div>
-      <div style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--gold);font-family:var(--font-ui);">৪১+ পেজ লক করা আছে</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.6);text-align:center;padding:0 30px;">সম্পূর্ণ বই ও অ্যাপ পড়তে নিচে কম্বো প্যাকেজ আনলক করুন</div>
-    </div>
-  </div>
-
-  <!-- Payment Section -->
-  <div id="fb-payment-section" style="margin:0 16px 16px;border-radius:18px;overflow:hidden;border:1px solid rgba(245,158,11,0.3);">
-    <div style="padding:14px 18px 12px;background:rgba(245,158,11,0.06);border-bottom:1px solid rgba(245,158,11,0.15);display:flex;justify-content:space-between;align-items:center;">
-      <div style="font-size:12px;font-weight:600;color:var(--gold);font-family:var(--font-ui);text-transform:uppercase;letter-spacing:0.07em;">🔒 প্রিমিয়াম কন্টেন্ট</div>
-      <div style="font-size:11px;color:var(--gold);font-family:var(--font-ui);">একবার কিনুন, সারাজীবন</div>
-    </div>
-    <div style="padding:20px 18px;">
-
-      <!-- Combo note -->
-      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#c7d2fe;font-family:var(--font-ui);line-height:1.6;">
-        🎁 এই বইসহ পুরো অ্যাপ ও দ্বিতীয় বই (প্রকাশিত হলে) — সব একসাথে মাত্র ৫০০ টাকায়।
-      </div>
-
-      <!-- bKash number -->
-      <div style="background:rgba(236,72,153,0.1);border:1.5px solid rgba(236,72,153,0.3);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
-        <div style="font-size:11px;color:#ec4899;font-family:var(--font-ui);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">💳 bKash পেমেন্ট নম্বর</div>
-        <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-          <div style="font-size:24px;font-weight:800;color:#ec4899;letter-spacing:0.04em;">01723037327</div>
-          <button onclick="copyBkashNumber(this)"
-            style="background:rgba(236,72,153,0.18);border:1px solid rgba(236,72,153,0.4);border-radius:8px;padding:6px 10px;font-size:11px;color:#ec4899;font-family:var(--font-ui);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;">
-            📋 কপি
-          </button>
-        </div>
-        <div style="font-size:13px;color:var(--text3);font-family:var(--font-ui);margin-top:4px;">পরিমাণ: ৫০০ টাকা (Send Money)</div>
-      </div>
-
-      <!-- Steps -->
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
-        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">১</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.6;">bKash অ্যাপ → <strong style="color:var(--text);">Send Money</strong> → <strong style="color:#ec4899;">01723037327</strong></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">২</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.6;">পরিমাণ: <strong style="color:var(--gold);">৫০০ টাকা</strong> • Reference: <strong style="color:var(--text);">COMBO</strong></div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">৩</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.6;">পেমেন্টের <strong style="color:var(--text);">স্ক্রিনশট</strong> নিচের WhatsApp বাটনে পাঠান</div>
-        </div>
-        <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-          <div style="width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">৪</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.6;"><strong style="color:var(--green);">Unlock Code</strong> পাবেন — নিচে দিলেই পুরো অ্যাপ ও বই খুলবে</div>
-        </div>
-      </div>
-
-      <!-- WhatsApp Button -->
-      <button onclick="fbSendWhatsApp()"
-        style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;background:#25d366;color:#fff;font-family:var(--font-serif);font-size:15px;font-weight:600;border:none;cursor:pointer;width:100%;margin-bottom:14px;">
-        <span style="font-size:22px;">💬</span> WhatsApp-এ স্ক্রিনশট পাঠান
-      </button>
-
-      <!-- Unlock Code -->
-      <div style="background:var(--surface);border-radius:14px;padding:16px;border:1px solid var(--border);">
-        <div style="font-size:13px;font-weight:600;margin-bottom:12px;">🔑 Unlock Code দিন</div>
-        <input id="fb-unlock-input" type="text"
-          placeholder="যেমন: COMBO500"
-          style="width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:var(--font-serif);font-size:16px;font-weight:600;letter-spacing:0.03em;outline:none;margin-bottom:10px;text-transform:uppercase;"
-          autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters"
-          oninput="this.value=this.value.toUpperCase()"
-          onkeydown="if(event.key==='Enter'){fbTryUnlock();}">
-        <button id="fb-unlock-btn" onclick="fbTryUnlock()"
-          style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:12px;background:linear-gradient(135deg,#5558e8,#7c3aed);color:#fff;font-family:var(--font-serif);font-size:15px;font-weight:600;border:none;cursor:pointer;width:100%;box-shadow:0 4px 20px rgba(99,102,241,0.35);">
-          🔓 Unlock করুন
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Success Screen (hidden) -->
-  <div id="fb-success" style="display:none;text-align:center;padding:40px 24px;">
-    <div style="font-size:64px;margin-bottom:16px;">🎉</div>
-    <div style="font-size:22px;font-weight:800;margin-bottom:8px;color:var(--green);">Unlocked!</div>
-    <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:24px;">মাস্টার কন্ট্রোল রিকভারি সংস্করণ সম্পূর্ণ আনলক হয়েছে!</div>
-    <button onclick="fbDownload()"
-      style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:12px;background:linear-gradient(135deg,#b45309,#d97706);color:#fff;font-family:var(--font-serif);font-size:15px;font-weight:600;border:none;cursor:pointer;width:100%;margin-bottom:12px;box-shadow:0 4px 16px rgba(245,158,11,0.3);">
-      📥 সম্পূর্ণ বই ডাউনলোড করুন
-    </button>
-    <button onclick="closeFlipbook()"
-      style="display:flex;align-items:center;justify-content:center;padding:14px;border-radius:12px;background:var(--surface);color:var(--text2);font-family:var(--font-serif);font-size:14px;border:1px solid var(--border);cursor:pointer;width:100%;">
-      ← অ্যাপে ফিরে যান
-    </button>
-  </div>
-
-  <div style="height:40px;"></div>
-</div>
-
-<!-- APP LOCK OVERLAY -->
-<div id="app-lock-overlay" style="display:none;position:fixed;inset:0;z-index:1500;background:var(--bg);overflow-y:auto;">
-  <div style="max-width:480px;margin:0 auto;padding:24px 16px 40px;">
-
-    <!-- Header -->
-    <div style="text-align:center;padding:20px 0 24px;">
-      <div style="font-size:46px;margin-bottom:10px;">🔒</div>
-      <div style="font-size:20px;font-weight:800;margin-bottom:6px;">এই অংশটি প্রিমিয়াম</div>
-      <div style="font-size:13px;color:var(--text2);font-family:var(--font-ui);line-height:1.6;">পুরো অ্যাপ আনলক করুন একবারের পেমেন্টে — সারাজীবনের জন্য</div>
-    </div>
-
-    <!-- Combo offer card -->
-    <div style="background:linear-gradient(135deg,#1e1b4b,#312e81);border-radius:18px;padding:20px;margin-bottom:18px;border:1px solid rgba(167,139,250,0.4);">
-      <div style="text-align:center;margin-bottom:14px;">
-        <span class="badge" style="font-size:11px;background:rgba(245,158,11,0.2);color:var(--gold);">🎁 কম্বো অফার</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#e0e7ff;font-family:var(--font-ui);">
-          <span style="color:#86efac;">✓</span> মাস্টার কন্ট্রোল: পবিত্রতার পথে (৪৬ পেজ)
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#e0e7ff;font-family:var(--font-ui);">
-          <span style="color:#86efac;">✓</span> রিকভারি সংস্করণ (প্রকাশিত হলেই পাবেন)
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#e0e7ff;font-family:var(--font-ui);">
-          <span style="color:#86efac;">✓</span> অ্যাপের সম্পূর্ণ অ্যাক্সেস — কেগেল, রিকভারি, হেলথ, প্রগ্রেস ট্র্যাকিং
-        </div>
-      </div>
-      <div style="text-align:center;padding-top:14px;border-top:1px solid rgba(167,139,250,0.25);">
-        <div style="font-size:12px;color:#c7d2fe;font-family:var(--font-ui);text-decoration:line-through;opacity:0.6;">আলাদা আলাদা কিনলে ৬০০+ টাকা</div>
-        <div style="font-size:30px;font-weight:800;color:#fff;margin-top:2px;">৫০০ টাকা</div>
-        <div style="font-size:11px;color:#a5b4fc;font-family:var(--font-ui);">একবার পেমেন্ট, সারাজীবন অ্যাক্সেস</div>
-      </div>
-    </div>
-
-    <!-- bKash number -->
-    <div style="background:rgba(236,72,153,0.1);border:1.5px solid rgba(236,72,153,0.3);border-radius:12px;padding:16px;text-align:center;margin-bottom:16px;">
-      <div style="font-size:11px;color:#ec4899;font-family:var(--font-ui);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">💳 bKash পেমেন্ট নম্বর</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
-        <div style="font-size:24px;font-weight:800;color:#ec4899;letter-spacing:0.04em;">01723037327</div>
-        <button onclick="copyBkashNumber(this)"
-          style="background:rgba(236,72,153,0.18);border:1px solid rgba(236,72,153,0.4);border-radius:8px;padding:6px 10px;font-size:11px;color:#ec4899;font-family:var(--font-ui);cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;">
-          📋 কপি
-        </button>
-      </div>
-      <div style="font-size:13px;color:var(--text3);font-family:var(--font-ui);margin-top:4px;">পরিমাণ: ৫০০ টাকা (Send Money)</div>
-    </div>
-
-    <!-- Steps -->
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;">
-      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">১</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.6;">bKash অ্যাপ → <strong style="color:var(--text);">Send Money</strong> → <strong style="color:#ec4899;">01723037327</strong></div>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">২</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.6;">পরিমাণ: <strong style="color:var(--gold);">৫০০ টাকা</strong> • Reference: <strong style="color:var(--text);">COMBO</strong></div>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">৩</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.6;">পেমেন্টের <strong style="color:var(--text);">স্ক্রিনশট</strong> নিচের WhatsApp বাটনে পাঠান</div>
-      </div>
-      <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
-        <div style="width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-ui);">৪</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.6;"><strong style="color:var(--green);">Unlock Code</strong> পাবেন — নিচে দিলেই পুরো অ্যাপ খুলবে</div>
-      </div>
-    </div>
-
-    <!-- WhatsApp Button -->
-    <button onclick="appLockSendWhatsApp()"
-      style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:12px;background:#25d366;color:#fff;font-family:var(--font-serif);font-size:15px;font-weight:600;border:none;cursor:pointer;width:100%;margin-bottom:14px;">
-      <span style="font-size:22px;">💬</span> WhatsApp-এ স্ক্রিনশট পাঠান
-    </button>
-
-    <!-- Unlock Code -->
-    <div style="background:var(--surface);border-radius:14px;padding:16px;border:1px solid var(--border);margin-bottom:16px;">
-      <div style="font-size:13px;font-weight:600;margin-bottom:12px;">🔑 Unlock Code দিন</div>
-      <input id="app-unlock-input" type="text"
-        placeholder="যেমন: COMBO500"
-        style="width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:var(--font-serif);font-size:16px;font-weight:600;letter-spacing:0.03em;outline:none;margin-bottom:10px;text-transform:uppercase;"
-        autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters"
-        oninput="this.value=this.value.toUpperCase()"
-        onkeydown="if(event.key==='Enter'){appTryUnlock();}">
-      <button id="app-unlock-btn" onclick="appTryUnlock()"
-        style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:12px;background:linear-gradient(135deg,#5558e8,#7c3aed);color:#fff;font-family:var(--font-serif);font-size:15px;font-weight:600;border:none;cursor:pointer;width:100%;box-shadow:0 4px 20px rgba(99,102,241,0.35);">
-        🔓 অ্যাপ Unlock করুন
-      </button>
-    </div>
-
-    <button onclick="closeAppLock()" style="display:block;width:100%;text-align:center;background:none;border:none;color:var(--text3);font-family:var(--font-ui);font-size:13px;padding:8px;cursor:pointer;">
-      ← হোমে ফিরে যান
-    </button>
+  <!-- Scroll area -->
+  <div id="fb-scroll-area" style="flex:1;overflow-y:auto;background:#0a0a0a;-webkit-overflow-scrolling:touch;">
+    <div id="fb-pages-container" style="max-width:600px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="height:40px;"></div>
   </div>
 </div>
 
 <!-- ENGAGEMENT MODAL -->
 <div id="engagement-modal" style="display:none;position:fixed;inset:0;z-index:998;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;">
   <div style="background:var(--card);border-radius:24px 24px 0 0;padding:28px 24px 36px;width:100%;max-width:480px;border-top:1px solid var(--border);">
-
 
     <!-- Emoji + Headline -->
     <div style="text-align:center; margin-bottom:20px;">
@@ -880,7 +649,7 @@
   <div class="disclaimer-hero">
     <div style="position:relative; z-index:1;">
       <div class="disclaimer-badge">🌿 প্রাকৃতিক ও বিজ্ঞানসম্মত পদ্ধতি</div>
-      <div class="disclaimer-icon"><img src="Images/logo-0ab19f16.png" alt="Master Control" style="width:120px;height:auto;object-fit:contain;"></div>
+      <div class="disclaimer-icon"><img src="images/logo-0ab19f16.png" alt="Master Control" style="width:120px;height:auto;object-fit:contain;"></div>
       <div class="disclaimer-title">মাস্টার কন্ট্রোল</div>
       <div class="disclaimer-subtitle">শুরু করার আগে কিছু গুরুত্বপূর্ণ কথা</div>
     </div>
@@ -946,7 +715,7 @@
 
 <!-- ONBOARDING -->
 <div id="onboarding">
-  <img src="Images/logo-0ab19f16.png" alt="Master Control" style="width:130px;height:auto;object-fit:contain;margin-bottom:16px;display:block;">
+  <img src="images/logo-0ab19f16.png" alt="Master Control" style="width:130px;height:auto;object-fit:contain;margin-bottom:16px;display:block;">
   <div class="onboard-title">মাস্টার কন্ট্রোল</div>
   <div class="onboard-subtitle">পেলভিক হেলথ, রিকভারি ও মানসিক শক্তির জন্য আপনার ব্যক্তিগত সঙ্গী</div>
   <div style="width:100%; margin-bottom:16px;">
@@ -966,55 +735,24 @@
 
 
 <!-- FREE FLIPBOOK MODAL (e.g. "তোমার শক্তি তুমি") -->
-<div id="flipbook-modal-free" style="display:none; position:fixed; inset:0; background:#111; z-index:800; flex-direction:column; touch-action:none;">
+<div id="flipbook-modal-free" style="display:none;position:fixed;inset:0;background:#0a0a0a;z-index:800;">
   <!-- Header -->
-  <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(0,0,0,0.9); flex-shrink:0; border-bottom:1px solid rgba(255,255,255,0.08);">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <button onclick="fbFreeClose()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:32px; height:32px; border-radius:50%; font-size:16px; cursor:pointer;">✕</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(0,0,0,0.95);flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="fbFreeClose()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;">✕</button>
       <div>
-        <div style="font-size:13px; font-weight:600; color:#fff;" id="flipbook-free-title">বই</div>
-        <div style="font-size:11px; color:rgba(255,255,255,0.4);" id="flipbook-free-page-counter">পেজ ১/২১</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;" id="flipbook-free-title">বই</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);">উপর-নিচে স্ক্রোল করে পড়ুন</div>
       </div>
     </div>
-    <div style="display:flex; gap:8px;">
-      <button onclick="fbFreeZoomOut()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:32px; height:32px; border-radius:8px; font-size:16px; cursor:pointer;">−</button>
-      <button onclick="fbFreeZoomIn()" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:32px; height:32px; border-radius:8px; font-size:16px; cursor:pointer;">+</button>
-    </div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.4);" id="flipbook-free-page-counter"></div>
   </div>
-
-  <!-- Page display area -->
-  <div id="fb-free-page-area" style="flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; position:relative; background:#1a1a2e;">
-    <!-- Page image with flip animation -->
-    <div id="fb-free-flip-container" style="position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-      <img id="fb-free-img" src="" alt="" style="max-height:100%; max-width:100%; object-fit:contain; border-radius:4px; box-shadow:0 8px 40px rgba(0,0,0,0.6); transition:transform 0.3s ease, opacity 0.3s ease; transform-origin:center;">
-    </div>
-
-    <!-- Left tap area -->
-    <div onclick="fbFreePrev()" style="position:absolute; left:0; top:0; width:40%; height:100%; cursor:pointer; display:flex; align-items:center; padding-left:8px; opacity:0;" id="fb-free-left-tap"
-         onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
-      <div style="background:rgba(0,0,0,0.5); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px;">‹</div>
-    </div>
-    <!-- Right tap area -->
-    <div onclick="fbFreeNext()" style="position:absolute; right:0; top:0; width:40%; height:100%; cursor:pointer; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; opacity:0;" id="fb-free-right-tap"
-         onmouseenter="this.style.opacity='1'" onmouseleave="this.style.opacity='0'">
-      <div style="background:rgba(0,0,0,0.5); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px;">›</div>
-    </div>
-  </div>
-
-  <!-- Bottom nav -->
-  <div style="padding:10px 16px 20px; background:rgba(0,0,0,0.9); display:flex; align-items:center; gap:12px; flex-shrink:0;">
-    <button onclick="fbFreePrev()" id="fb-free-prev-btn" style="background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:10px; padding:10px 18px; font-size:15px; cursor:pointer; font-family:inherit;">‹ আগে</button>
-    <!-- Progress bar -->
-    <div style="flex:1; position:relative;">
-      <div style="height:4px; background:rgba(255,255,255,0.15); border-radius:2px; overflow:hidden;">
-        <div id="fb-free-progress" style="height:100%; background:linear-gradient(90deg,#6366f1,#06b6d4); border-radius:2px; transition:width 0.3s ease; width:0%;"></div>
-      </div>
-      <div style="text-align:center; margin-top:6px; font-size:11px; color:rgba(255,255,255,0.4);" id="fb-free-page-num">১ / ২১</div>
-    </div>
-    <button onclick="fbFreeNext()" id="fb-free-next-btn" style="background:rgba(99,102,241,0.8); border:none; color:#fff; border-radius:10px; padding:10px 18px; font-size:15px; cursor:pointer; font-family:inherit;">পরে ›</button>
+  <!-- Scroll area -->
+  <div id="fb-free-scroll-area" style="flex:1;overflow-y:auto;background:#0a0a0a;-webkit-overflow-scrolling:touch;">
+    <div id="fb-free-pages-container" style="max-width:600px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:8px;"></div>
+    <div style="height:40px;"></div>
   </div>
 </div>
-
 
 <!-- TEST MODAL -->
 <div id="test-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:600; align-items:flex-end; justify-content:center;">
@@ -1114,14 +852,16 @@
   <div class="topbar">
     <div>
       <div style="display:flex;align-items:center;gap:8px;">
-      <img src="Images/logo-0ab19f16.png" alt="" style="width:26px;height:26px;object-fit:contain;flex-shrink:0;">
+      <img src="images/logo-0ab19f16.png" alt="" style="width:26px;height:26px;object-fit:contain;flex-shrink:0;">
       <div class="topbar-title" id="topbar-title">🏠 হোম</div>
     </div>
       <div class="topbar-subtitle" id="topbar-date"></div>
     </div>
-    <div style="display:flex; align-items:center; gap:12px;">
+    <div style="display:flex; align-items:center; gap:10px;">
       <span id="streak-badge" style="font-size:13px; font-weight:600; color:var(--gold);">🔥 0</span>
-      <span style="font-size:20px;">🧬</span>
+      <button onclick="openEmergency()" style="background:linear-gradient(135deg,#dc2626,#991b1b);border:none;border-radius:10px;padding:5px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(220,38,38,0.4);">
+        🆘 জরুরি সহায়তা
+      </button>
     </div>
   </div>
 
@@ -1129,6 +869,57 @@
 
   <!-- ===== HOME ===== -->
   <div id="screen-home" class="screen active">
+
+    <!-- EMERGENCY MODAL -->
+    <div id="emergency-modal" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.92);backdrop-filter:blur(10px);overflow-y:auto;">
+      <div style="max-width:480px;margin:0 auto;padding:24px 20px 60px;">
+
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+          <div style="font-size:20px;font-weight:800;color:#fff;">🆘 জরুরি সহায়তা</div>
+          <button onclick="closeEmergency()" style="background:rgba(255,255,255,0.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button>
+        </div>
+
+        <!-- Breathing Exercise -->
+        <div style="background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(6,182,212,0.15));border:1px solid rgba(99,102,241,0.3);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:#a5b4fc;margin-bottom:12px;">🌬️ এখনই শ্বাস নাও</div>
+          <div id="breath-circle" style="width:90px;height:90px;border-radius:50%;background:rgba(99,102,241,0.3);border:3px solid #6366f1;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#a5b4fc;font-weight:600;transition:transform 4s ease;cursor:pointer;" onclick="startBreathing()">
+            শুরু করুন
+          </div>
+          <div id="breath-text" style="font-size:13px;color:rgba(255,255,255,0.6);">বৃত্তে ক্লিক করুন</div>
+        </div>
+
+        <!-- Quran Ayat -->
+        <div style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.1));border:1px solid rgba(245,158,11,0.3);border-radius:16px;padding:20px;margin-bottom:16px;">
+          <div style="font-size:13px;color:var(--gold);font-weight:700;margin-bottom:12px;">📖 আল্লাহর বাণী</div>
+          <div id="emergency-ayat" style="font-size:15px;color:#fff;line-height:1.8;font-family:var(--font-serif);text-align:center;"></div>
+          <div id="emergency-ayat-ref" style="font-size:11px;color:rgba(255,255,255,0.4);text-align:center;margin-top:8px;font-family:var(--font-ui);"></div>
+          <button onclick="nextAyat()" style="width:100%;margin-top:12px;padding:8px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:10px;color:var(--gold);font-size:12px;cursor:pointer;font-family:inherit;">অন্য আয়াত দেখুন →</button>
+        </div>
+
+        <!-- Reminder cards -->
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:20px;margin-bottom:16px;">
+          <div style="font-size:13px;color:#fff;font-weight:700;margin-bottom:12px;">💭 মনে রেখো</div>
+          <div style="display:flex;flex-direction:column;gap:10px;" id="emergency-reminders"></div>
+        </div>
+
+        <!-- Action buttons -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+          <button onclick="emergencyAction('walk')" style="padding:14px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:12px;color:#4ade80;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">🚶 উঠে হাঁটো — এখনই</button>
+          <button onclick="emergencyAction('wudu')" style="padding:14px;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);border-radius:12px;color:#22d3ee;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">💧 অযু করো</button>
+          <button onclick="emergencyAction('salah')" style="padding:14px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:12px;color:var(--gold);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">🕌 দুই রাকাত নামাজ পড়ো</button>
+          <button onclick="emergencyAction('cold')" style="padding:14px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:12px;color:#a5b4fc;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">❄️ ঠান্ডা পানি দিয়ে মুখ ধুও</button>
+        </div>
+
+        <!-- Victory counter -->
+        <div style="text-align:center;padding:16px;background:rgba(255,255,255,0.03);border-radius:12px;">
+          <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:6px;">তুমি এটা জিততে পারবে</div>
+          <div style="font-size:13px;color:#fff;font-weight:600;">এই urge মাত্র <span id="urge-timer" style="color:#4ade80;font-weight:800;">15:00</span> মিনিটেই চলে যাবে</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;">আল্লাহর শপথ — এটা সত্য।</div>
+        </div>
+      </div>
+    </div>
+
     <div class="gradient-card">
       <div class="gradient-card-content">
         <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -1215,6 +1006,78 @@
   <div id="screen-kegel" class="screen">
     <div class="section-header">💪 কেগেল ট্রেনিং</div>
     <div class="section-sub">পেলভিক ফ্লোর শক্তিশালী করুন</div>
+
+    <!-- 30 DAY CHALLENGE SECTION -->
+    <div id="challenge-section" style="margin:0 16px 16px;">
+
+      <!-- Not started -->
+      <div id="challenge-start-card" style="background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(6,182,212,0.1));border:1px solid rgba(99,102,241,0.35);border-radius:16px;padding:20px;text-align:center;">
+        <div style="font-size:36px;margin-bottom:10px;">🏆</div>
+        <div style="font-size:17px;font-weight:800;margin-bottom:6px;">৩০ দিনের কেগেল চ্যালেঞ্জ</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">প্রতিদিন একটি নির্দিষ্ট task — ৩০ দিনে পেলভিক ফ্লোর সম্পূর্ণ শক্তিশালী করুন</div>
+        <button onclick="startChallenge()" style="background:linear-gradient(135deg,#6366f1,#06b6d4);border:none;border-radius:12px;padding:13px 32px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">🚀 চ্যালেঞ্জ শুরু করুন</button>
+      </div>
+
+      <!-- In progress -->
+      <div id="challenge-progress-card" style="display:none;">
+
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(6,182,212,0.1));border:1px solid rgba(99,102,241,0.3);border-radius:16px;padding:16px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div>
+              <div style="font-size:15px;font-weight:800;">🏆 ৩০ দিনের চ্যালেঞ্জ</div>
+              <div style="font-size:12px;color:var(--text2);margin-top:2px;" id="challenge-day-label">দিন ১ / ৩০</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:24px;font-weight:800;color:var(--accent);" id="challenge-streak-num">0</div>
+              <div style="font-size:10px;color:var(--text3);">দিন সম্পন্ন</div>
+            </div>
+          </div>
+          <!-- Progress bar -->
+          <div style="background:rgba(255,255,255,0.1);border-radius:4px;height:6px;overflow:hidden;">
+            <div id="challenge-progress-bar" style="height:100%;background:linear-gradient(90deg,#6366f1,#06b6d4);border-radius:4px;transition:width 0.5s ease;width:0%;"></div>
+          </div>
+        </div>
+
+        <!-- Today's Task -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px;" id="challenge-today-card">
+          <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:8px;font-family:var(--font-ui);">আজকের TASK</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px;" id="challenge-task-title">লোড হচ্ছে...</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px;" id="challenge-task-desc"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+            <div style="background:rgba(99,102,241,0.15);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--accent);font-family:var(--font-ui);" id="challenge-task-sets"></div>
+            <div style="background:rgba(6,182,212,0.15);border-radius:8px;padding:6px 12px;font-size:12px;color:#06b6d4;font-family:var(--font-ui);" id="challenge-task-hold"></div>
+          </div>
+          <button id="challenge-complete-btn" onclick="completeChallenge()" style="width:100%;padding:13px;background:linear-gradient(135deg,#6366f1,#06b6d4);border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✅ আজকের task সম্পন্ন করলাম</button>
+          <div id="challenge-done-badge" style="display:none;text-align:center;padding:12px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:12px;">
+            <div style="font-size:24px;">✅</div>
+            <div style="font-size:13px;color:#4ade80;font-weight:700;margin-top:4px;">আজকের task সম্পন্ন!</div>
+          </div>
+        </div>
+
+        <!-- Achievement Badges -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:12px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">🎖️ অর্জিত ব্যাজ</div>
+          <div id="challenge-badges" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+
+        <!-- Grid calendar -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:12px;">📅 ৩০ দিনের অগ্রগতি</div>
+          <div id="challenge-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;"></div>
+        </div>
+
+      </div>
+
+      <!-- Completed -->
+      <div id="challenge-completed-card" style="display:none;background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(234,179,8,0.1));border:1px solid rgba(245,158,11,0.4);border-radius:16px;padding:24px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:10px;">🏆</div>
+        <div style="font-size:18px;font-weight:800;color:var(--gold);margin-bottom:8px;">অভিনন্দন! চ্যালেঞ্জ সম্পন্ন!</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">তুমি ৩০ দিনের কেগেল চ্যালেঞ্জ সফলভাবে সম্পন্ন করেছ। তুমি একজন চ্যাম্পিয়ন!</div>
+        <button onclick="resetChallenge()" style="background:var(--gold);border:none;border-radius:12px;padding:12px 24px;color:#000;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 আবার শুরু করুন</button>
+      </div>
+
+    </div>
 
     <!-- ANIMATED MUSCLE GUIDE (Kegel Screen) -->
     <div class="card" style="border-color:rgba(99,102,241,0.3); padding:0; overflow:hidden;">
@@ -1848,7 +1711,7 @@
       <div style="display:flex; gap:0;">
         <!-- Cover Image -->
         <div style="width:110px; flex-shrink:0; position:relative; background:#052e16; min-height:150px;">
-          <img src="Images/logo-6477d386.jpg"
+          <img src="images/logo-6477d386.jpg"
                alt="সন্তানের অজানা জগৎ"
                style="width:100%; height:100%; object-fit:cover; display:block; min-height:150px;"
                onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:150px;font-size:40px;\'>📖</div>'">
@@ -1872,14 +1735,14 @@
 
     <div style="padding:0 16px 10px; font-size:13px; font-weight:600; color:var(--text2);">🔒 প্রিমিয়াম</div>
 
-    <!-- Book 2: পবিত্রতার পথে - PREMIUM (actual book, real cover) -->
+    <!-- Book 2: পবিত্রতার পথে - PREMIUM -->
     <div style="margin:0 16px 14px; border-radius:var(--radius); background:var(--card); border:1px solid rgba(99,102,241,0.4); overflow:hidden;">
       <div style="display:flex; gap:0;">
-        <!-- Real Cover -->
-        <div style="width:110px; flex-shrink:0; position:relative; min-height:160px; overflow:hidden;">
-          <img id="mc-cover-img" src="" alt="পবিত্রতার পথে"
-            style="width:100%; height:100%; object-fit:cover; display:block;">
-          <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,var(--card));"></div>
+        <!-- Cover placeholder -->
+        <div style="width:110px; flex-shrink:0; background:linear-gradient(160deg,#1e1b4b,#312e81); display:flex; align-items:center; justify-content:center; min-height:150px; position:relative;">
+          <div style="text-align:center;">
+            <div style="font-size:38px;">🌿</div>
+          </div>
           <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(30,27,75,0.9)); padding:6px 8px;">
             <span class="badge badge-purple" style="font-size:10px;">🔒 প্রিমিয়াম</span>
           </div>
@@ -1889,13 +1752,13 @@
           <div>
             <div style="font-size:15px; font-weight:700; color:#a5b4fc; line-height:1.3; margin-bottom:6px;">পবিত্রতার পথে</div>
             <div style="font-size:11px; color:var(--text2); line-height:1.6; margin-bottom:10px;">আধ্যাত্মিক ও বৈজ্ঞানিক মুক্তির পথ</div>
-            <div style="font-size:11px; color:var(--text3);">ইমান • আত্মিক জাগরণ • সফলতার গল্প • ৪৬ পেজ</div>
+            <div style="font-size:11px; color:var(--text3);">ইমান • আত্মিক জাগরণ • সফলতার গল্প</div>
           </div>
-          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
-            <button class="btn" style="padding:9px; font-size:13px; background:rgba(99,102,241,0.15); border:1.5px solid rgba(99,102,241,0.4); color:#a5b4fc;" onclick="openFlipbook()">
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:12px;">
+            <button class="btn" style="padding:9px; font-size:13px; background:rgba(99,102,241,0.15); border:1.5px solid rgba(99,102,241,0.4); color:var(--accent);" onclick="openFlipbook('purity')">
               📖 ৫ পেজ ফ্রি দেখুন
             </button>
-            <button class="btn btn-primary" style="padding:9px; font-size:13px;" onclick="openAppLock()">
+            <button class="btn btn-primary" style="padding:9px; font-size:13px;" onclick="isAppUnlocked() ? openFlipbook('purity') : showUnlockPrompt('পবিত্রতার পথে বই')">
               🔓 কিনুন ও Unlock করুন
             </button>
           </div>
@@ -1903,14 +1766,16 @@
       </div>
     </div>
 
-    <!-- Book 3: রিকভারি সংস্করণ - COMING SOON -->
-    <div style="margin:0 16px 20px; border-radius:var(--radius); background:var(--card); border:1px solid rgba(245,158,11,0.25); overflow:hidden; opacity:0.7;">
+    <!-- Book 3: রিকভারি সংস্করণ - PREMIUM with Flipbook -->
+    <div style="margin:0 16px 20px; border-radius:var(--radius); background:var(--card); border:1px solid rgba(245,158,11,0.4); overflow:hidden; box-shadow:0 4px 20px rgba(245,158,11,0.1);">
       <div style="display:flex; gap:0;">
-        <!-- Placeholder Cover -->
-        <div style="width:110px; flex-shrink:0; background:linear-gradient(160deg,#451a03,#78350f); display:flex; align-items:center; justify-content:center; min-height:150px; position:relative;">
-          <div style="font-size:38px;">📘</div>
-          <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(28,25,23,0.9)); padding:6px 8px;">
-            <span class="badge" style="font-size:10px; background:rgba(245,158,11,0.15); color:var(--gold);">⏳ শীঘ্রই আসছে</span>
+        <!-- Real Cover -->
+        <div style="width:110px; flex-shrink:0; position:relative; min-height:160px; overflow:hidden;" id="recovery-cover">
+          <img id="recovery-cover-img" src="" alt="রিকভারি সংস্করণ"
+            style="width:100%; height:100%; object-fit:cover; display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to right,transparent 60%,var(--card));"></div>
+          <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(28,25,23,0.95)); padding:6px 8px;">
+            <span class="badge badge-gold" style="font-size:10px;">🔒 প্রিমিয়াম</span>
           </div>
         </div>
         <!-- Info -->
@@ -1920,45 +1785,20 @@
             <div style="font-size:11px; color:var(--text2); line-height:1.6; margin-bottom:6px;">নারী-পুরুষ উভয়ের আত্মনিয়ন্ত্রণের পূর্ণাঙ্গ গাইড</div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
               <span style="font-size:10px; color:var(--text3); background:var(--surface); padding:2px 8px; border-radius:10px; font-family:var(--font-ui);">১৪৫ পেজ</span>
+              <span style="font-size:10px; color:var(--gold); background:rgba(245,158,11,0.1); padding:2px 8px; border-radius:10px; font-family:var(--font-ui);">২৯৯ টাকা</span>
             </div>
           </div>
-          <button class="btn" style="padding:9px; font-size:13px; background:var(--surface); border:1px solid var(--border); color:var(--text3);" onclick="showToast('⏳ শীঘ্রই প্রকাশিত হবে')">
-            শীঘ্রই আসছে
-          </button>
+          <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+            <button class="btn" style="padding:9px; font-size:13px; background:rgba(245,158,11,0.15); border:1.5px solid rgba(245,158,11,0.4); color:var(--gold);" onclick="openFlipbook('recovery')">
+              📖 ৫ পেজ ফ্রি দেখুন
+            </button>
+            <button class="btn btn-gold" style="padding:9px; font-size:13px;" onclick="isAppUnlocked() ? openFlipbook('recovery') : showUnlockPrompt('রিকভারি সংস্করণ বই')">
+              🔓 কিনুন ও Unlock করুন
+            </button>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- Article: Why Master Control -->
-    <div style="padding:0 16px 10px; font-size:13px; font-weight:600; color:var(--text2);">📝 আর্টিকেল</div>
-    <div class="edu-card">
-      <div class="edu-header" onclick="toggleEdu(this)">
-        <div class="edu-title"><span>👑</span> কেন মাস্টার কন্ট্রোল?</div>
-        <span>▼</span>
-      </div>
-      <div class="edu-body">
-        শুধু সমস্যা সম্পর্কে জানা যথেষ্ট নয়। পরিবর্তনের জন্য প্রয়োজন একটি পথ, একটি কাঠামো এবং একটি জীবনব্যবস্থা। এই কারণেই এই অ্যাপের নাম <strong>মাস্টার কন্ট্রোল</strong>।
-        <br><br>
-        পৃথিবী আজ স্বাধীনতার নতুন সংজ্ঞা দিয়েছে — "যা ইচ্ছা তাই করো।" কিন্তু যদি তুমি নিজের রাগ, চোখ বা অভ্যাস নিয়ন্ত্রণ করতে না পারো, তুমি কি সত্যিই স্বাধীন? প্রকৃত স্বাধীনতা হলো নিজের উপর কর্তৃত্ব প্রতিষ্ঠা করা — এটাই Master Control-এর মূল দর্শন।
-        <br><br>
-        <strong>MASTER — ছয়টি স্তম্ভ:</strong>
-        <br><br>
-        <strong>M — Mindfulness:</strong> নিজেকে পর্যবেক্ষণ করো। অনেকে সারা জীবন অন্যদের পর্যবেক্ষণ করে, নিজেকে নয়। পরিবর্তনের প্রথম ধাপ আত্মসচেতনতা — কখন দুর্বল হও, কোন পরিস্থিতি প্রভাবিত করে।
-        <br><br>
-        <strong>A — Awareness:</strong> নিজের দুর্বলতাকে চেনো। দুর্বলতা লুকিয়ে রাখলে তা আরও শক্তিশালী হয়। ট্রিগারগুলো স্পষ্টভাবে চিনতে পারলেই তার উপর নিয়ন্ত্রণ প্রতিষ্ঠার সুযোগ তৈরি হয়।
-        <br><br>
-        <strong>S — Self Discipline:</strong> না বলতে শেখো। আত্মনিয়ন্ত্রণ একদিনে তৈরি হয় না — প্রতিদিনের ক্ষুদ্র বিজয়গুলোই বড় পরিবর্তনের ভিত্তি তৈরি করে। শৃঙ্খলাই মানুষকে প্রকৃত স্বাধীনতা দেয়।
-        <br><br>
-        <strong>T — Taqwa:</strong> যখন কেউ দেখে না। মানুষের প্রকৃত চরিত্র প্রকাশ পায় তখনই, যখন সে একা থাকে। তাকওয়া হলো সেই অভ্যন্তরীণ সচেতনতা — কেউ না দেখলেও আল্লাহ দেখছেন।
-        <br><br>
-        <strong>E — Excellence:</strong> নিজের সেরা সংস্করণ হও। শুধু খারাপ অভ্যাস ছাড়াই যথেষ্ট নয় — জ্ঞান, চরিত্র, ইবাদত, পরিবার ও সমাজের প্রতি দায়িত্বেও উন্নতির সুযোগ আছে। জীবনে বড় লক্ষ্য থাকলে ছোট প্রলোভনের আকর্ষণ কমে যায়।
-        <br><br>
-        <strong>R — Responsibility:</strong> নিজের জীবনের দায়িত্ব নাও। পরিবর্তন তখনই শুরু হয় যখন একজন মানুষ বলে — "আমার জীবনের দায়িত্ব আমার।" দায়িত্বশীল মানুষ অজুহাত খোঁজে না, সমাধান খোঁজে।
-        <br><br>
-        <em>"নিজেকে জয় করো, জীবনকে বদলে দাও।"</em>
-      </div>
-    </div>
-
 
     <!-- Education Accordions -->
     <div class="edu-card">
@@ -2382,6 +2222,378 @@ function saveState() {
   localStorage.setItem('mastercontrol_v1', JSON.stringify(state));
 }
 
+// ========================
+// EMERGENCY SYSTEM
+// ========================
+const EMERGENCY_AYATS = [
+  { text: "মুমিন পুরুষদের বলুন, তারা যেন তাদের দৃষ্টি অবনত রাখে এবং লজ্জাস্থান হেফাজত করে। এটা তাদের জন্য অধিক পবিত্র।", ref: "সূরা নূর — ২৪:৩০" },
+  { text: "মুমিন নারীদের বলুন, তারা যেন তাদের দৃষ্টি অবনত রাখে এবং লজ্জাস্থান হেফাজত করে।", ref: "সূরা নূর — ২৪:৩১" },
+  { text: "শয়তান তোমাদের শত্রু, সুতরাং তাকে শত্রু হিসেবেই গ্রহণ করো। সে তার দলকে ডাকে যেন তারা জাহান্নামের বাসিন্দা হয়।", ref: "সূরা ফাতির — ৩৫:৬" },
+  { text: "হে আদম সন্তান! শয়তান যেন তোমাদেরকে ফিতনায় না ফেলে।", ref: "সূরা আরাফ — ৭:২৭" },
+  { text: "নিশ্চয়ই আল্লাহ তাওবাকারীদের ভালোবাসেন এবং যারা পবিত্র থাকে তাদেরও ভালোবাসেন।", ref: "সূরা বাকারা — ২:২২২" },
+  { text: "যে আল্লাহকে ভয় করে, আল্লাহ তার জন্য পথ বের করে দেন এবং তাকে এমন স্থান থেকে রিজিক দেন যা সে কল্পনাও করেনি।", ref: "সূরা তালাক — ৬৫:২-৩" },
+  { text: "তোমরা আল্লাহর রহমত থেকে নিরাশ হয়ো না। নিশ্চয়ই আল্লাহ সকল গুনাহ ক্ষমা করেন।", ref: "সূরা যুমার — ৩৯:৫৩" },
+  { text: "কষ্টের সাথেই রয়েছে স্বস্তি। নিশ্চয়ই কষ্টের সাথেই রয়েছে স্বস্তি।", ref: "সূরা ইনশিরাহ — ৯৪:৫-৬" },
+];
+
+const EMERGENCY_REMINDERS = [
+  { icon: "⏱️", text: "এই অনুভূতি মাত্র ১৫ মিনিট। তারপর চলে যাবে।" },
+  { icon: "🏆", text: "তুমি এত দিন ধরে লড়াই করছ — এখন হার মানলে সব শেষ।" },
+  { icon: "👁️", text: "আল্লাহ দেখছেন। তুমি একা নও।" },
+  { icon: "🔥", text: "তোমার streak শেষ হয়ে যাবে — সেটা কি চাও?" },
+  { icon: "💪", text: "তুমি এর চেয়ে শক্তিশালী। তুমি এটা জিতেছ আগেও।" },
+];
+
+let currentAyatIndex = 0;
+let urgeTimerInterval = null;
+let breathInterval = null;
+let breathPhase = 0;
+
+function openEmergency() {
+  const modal = document.getElementById('emergency-modal');
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  // Show random ayat
+  currentAyatIndex = Math.floor(Math.random() * EMERGENCY_AYATS.length);
+  renderAyat();
+  // Show reminders
+  renderReminders();
+  // Start urge timer
+  startUrgeTimer();
+}
+
+function closeEmergency() {
+  document.getElementById('emergency-modal').style.display = 'none';
+  document.body.style.overflow = '';
+  if (urgeTimerInterval) { clearInterval(urgeTimerInterval); urgeTimerInterval = null; }
+  if (breathInterval) { clearInterval(breathInterval); breathInterval = null; }
+  // Reset breathing circle
+  const circle = document.getElementById('breath-circle');
+  if (circle) { circle.style.transform = 'scale(1)'; circle.textContent = 'শুরু করুন'; }
+  document.getElementById('breath-text').textContent = 'বৃত্তে ক্লিক করুন';
+}
+
+function renderAyat() {
+  const ayat = EMERGENCY_AYATS[currentAyatIndex];
+  document.getElementById('emergency-ayat').textContent = '"' + ayat.text + '"';
+  document.getElementById('emergency-ayat-ref').textContent = '— ' + ayat.ref;
+}
+
+function nextAyat() {
+  currentAyatIndex = (currentAyatIndex + 1) % EMERGENCY_AYATS.length;
+  renderAyat();
+}
+
+function renderReminders() {
+  const container = document.getElementById('emergency-reminders');
+  container.innerHTML = EMERGENCY_REMINDERS.map(r =>
+    `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;">
+      <span style="font-size:18px;flex-shrink:0;">${r.icon}</span>
+      <span style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.6;">${r.text}</span>
+    </div>`
+  ).join('');
+}
+
+function startUrgeTimer() {
+  if (urgeTimerInterval) clearInterval(urgeTimerInterval);
+  let seconds = 15 * 60;
+  const el = document.getElementById('urge-timer');
+  urgeTimerInterval = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) { clearInterval(urgeTimerInterval); el.textContent = '০:০০'; return; }
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    el.textContent = m + ':' + String(s).padStart(2, '0');
+  }, 1000);
+}
+
+function startBreathing() {
+  if (breathInterval) { clearInterval(breathInterval); breathInterval = null; }
+  const circle = document.getElementById('breath-circle');
+  const text = document.getElementById('breath-text');
+  const phases = [
+    { label: 'শ্বাস নাও', duration: 4000, scale: 1.4, color: 'rgba(99,102,241,0.5)', textColor: '#a5b4fc' },
+    { label: 'ধরে রাখো', duration: 4000, scale: 1.4, color: 'rgba(245,158,11,0.4)', textColor: '#fcd34d' },
+    { label: 'ছাড়ো', duration: 4000, scale: 1.0, color: 'rgba(34,197,94,0.3)', textColor: '#4ade80' },
+    { label: 'বিরতি', duration: 2000, scale: 1.0, color: 'rgba(99,102,241,0.2)', textColor: '#a5b4fc' },
+  ];
+  let i = 0;
+  const runPhase = () => {
+    const p = phases[i % phases.length];
+    circle.style.transition = `transform ${p.duration}ms ease, background ${p.duration}ms ease`;
+    circle.style.transform = `scale(${p.scale})`;
+    circle.style.background = p.color;
+    circle.style.color = p.textColor;
+    circle.textContent = p.label;
+    text.textContent = ['৪ সেকেন্ড শ্বাস নাও', '৪ সেকেন্ড ধরে রাখো', '৪ সেকেন্ড ছাড়ো', '২ সেকেন্ড বিরতি'][i % 4];
+    i++;
+  };
+  runPhase();
+  breathInterval = setInterval(runPhase, 4000);
+}
+
+function emergencyAction(type) {
+  const messages = {
+    walk: '👟 ভালো! এখনই উঠো এবং ঘরের বাইরে যাও। ৫ মিনিট হাঁটো।',
+    wudu: '💧 অযু করলে মন পরিষ্কার হয়। বাথরুমে যাও এখনই।',
+    salah: '🕌 দুই রাকাত নফল নামাজ পড়ো। আল্লাহ শুনছেন।',
+    cold: '❄️ ঠান্ডা পানি দিয়ে মুখ ধুও। এটা সত্যিই কাজ করে।',
+  };
+  showToast(messages[type]);
+  setTimeout(() => closeEmergency(), 1500);
+}
+
+
+// ========================
+// 30 DAY KEGEL CHALLENGE
+// ========================
+var CHALLENGE_TASKS = [
+  { day:1,  title:"শুরুর দিন",           sets:3, reps:10, hold:3,  desc:"হালকা শুরু। শুয়ে বা বসে ৩ সেট করো। প্রতিটি সংকোচন ৩ সেকেন্ড ধরে রাখো।" },
+  { day:2,  title:"ভিত্তি গড়া",          sets:3, reps:10, hold:3,  desc:"গতকালের মতোই। এবার মনোযোগ দিয়ে সঠিক পেশী অনুভব করো।" },
+  { day:3,  title:"ছন্দ খোঁজা",          sets:3, reps:12, hold:3,  desc:"রেপ একটু বাড়লো। প্রতিটি সংকোচনের মাঝে সমান বিশ্রাম নাও।" },
+  { day:4,  title:"স্থিতিশীলতা",         sets:3, reps:12, hold:4,  desc:"hold time বাড়লো। ধীরে ধীরে ছাড়ো, হঠাৎ নয়।" },
+  { day:5,  title:"প্রথম মাইলফলক",       sets:4, reps:10, hold:4,  desc:"৪ সেট! তুমি এগিয়ে যাচ্ছ। সকালে উঠে করলে ভালো।" },
+  { day:6,  title:"বিশ্রাম ও পুনরুদ্ধার", sets:2, reps:10, hold:3,  desc:"হালকা দিন। শরীরকে recover করতে দাও।" },
+  { day:7,  title:"প্রথম সপ্তাহ সম্পন্ন!", sets:4, reps:12, hold:4,  desc:"এক সপ্তাহ! তুমি অসাধারণ। আজ একটু বেশি শক্তি দিয়ে করো।" },
+  { day:8,  title:"নতুন সপ্তাহ",          sets:4, reps:12, hold:5,  desc:"hold time ৫ সেকেন্ড। শ্বাস স্বাভাবিক রাখো।" },
+  { day:9,  title:"শক্তি বৃদ্ধি",         sets:4, reps:14, hold:5,  desc:"রেপ বাড়লো। ক্লান্ত লাগলেও শেষ করো।" },
+  { day:10, title:"দশম দিন",             sets:4, reps:14, hold:5,  desc:"এক তৃতীয়াংশ সম্পন্ন! তুমি সত্যিই পরিবর্তন হচ্ছ।" },
+  { day:11, title:"দ্রুত সংকোচন",        sets:3, reps:20, hold:2,  desc:"আজ fast twitch — দ্রুত সংকোচন ও ছাড়। শক্তি ও গতি দুটোই বাড়ে।" },
+  { day:12, title:"দীর্ঘ hold",           sets:3, reps:8,  hold:8,  desc:"কম রেপ কিন্তু বেশি hold। ধৈর্য ধরো।" },
+  { day:13, title:"মিশ্র অনুশীলন",       sets:4, reps:12, hold:6,  desc:"দ্রুত ১০টি + ধীরে ৮টি। বৈচিত্র্য পেশী শক্তিশালী করে।" },
+  { day:14, title:"দ্বিতীয় সপ্তাহ শেষ!", sets:4, reps:15, hold:6,  desc:"দুই সপ্তাহ! তুমি একজন যোদ্ধা। আজ পূর্ণ শক্তিতে করো।" },
+  { day:15, title:"মাঝপথ!",              sets:5, reps:12, hold:6,  desc:"অর্ধেক পথ পেরিয়েছ! ৫ সেট চালু। তুমি পারবেই।" },
+  { day:16, title:"উন্নত স্তর",           sets:5, reps:12, hold:7,  desc:"hold ৭ সেকেন্ড। শ্বাস নিতে ভুলো না।" },
+  { day:17, title:"গভীর সংকোচন",        sets:5, reps:14, hold:7,  desc:"আজ চোখ বন্ধ করে করো। পেশীর অনুভূতিতে মনোযোগ দাও।" },
+  { day:18, title:"শক্তির পরীক্ষা",      sets:5, reps:15, hold:7,  desc:"এটাই এখন পর্যন্ত সবচেয়ে কঠিন দিন। শেষ করলে বিশাল পুরস্কার।" },
+  { day:19, title:"পুনরুদ্ধার দিন",       sets:3, reps:10, hold:5,  desc:"আজ হালকা। শরীর মেরামত হচ্ছে — এটাও অগ্রগতি।" },
+  { day:20, title:"বিশতম দিন!",          sets:5, reps:15, hold:8,  desc:"২০ দিন! তুমি অবিশ্বাস্য। hold ৮ সেকেন্ড — তুমি পারবে।" },
+  { day:21, title:"তৃতীয় সপ্তাহ শেষ!",  sets:5, reps:15, hold:8,  desc:"তিন সপ্তাহ! শরীরে এখন পার্থক্য অনুভব হওয়ার কথা।" },
+  { day:22, title:"দ্রুত ও শক্তিশালী",   sets:4, reps:25, hold:2,  desc:"আজ fast twitch focus। দ্রুত ২৫টি — নিয়ন্ত্রণের সাথে।" },
+  { day:23, title:"সর্বোচ্চ hold",        sets:3, reps:8,  hold:10, desc:"১০ সেকেন্ড hold! এটাই সবচেয়ে কঠিন। তুমি এখানে আছ কারণ তুমি শক্তিশালী।" },
+  { day:24, title:"চ্যাম্পিয়নের দিন",    sets:5, reps:20, hold:8,  desc:"এটা champion level। তুমি এখন এই মাত্রায় পৌঁছেছ।" },
+  { day:25, title:"শেষ সপ্তাহের শুরু",    sets:5, reps:20, hold:8,  desc:"মাত্র ৬ দিন বাকি! তুমি এত কাছে। থামা যাবে না।" },
+  { day:26, title:"গভীর শক্তি",           sets:5, reps:20, hold:9,  desc:"hold ৯ সেকেন্ড। তুমি এখন সত্যিকারের পরিবর্তন অনুভব করছ।" },
+  { day:27, title:"অদম্য মনোভাব",        sets:6, reps:15, hold:8,  desc:"৬ সেট! তুমি এই মাত্রায় পৌঁছানোর যোগ্য।" },
+  { day:28, title:"শেষের দিকে",          sets:6, reps:20, hold:8,  desc:"মাত্র ২ দিন! এই দুই দিন তোমার সেরাটা দাও।" },
+  { day:29, title:"চূড়ান্ত প্রস্তুতি",    sets:6, reps:20, hold:9,  desc:"কাল শেষ দিন। আজ পূর্ণ শক্তিতে করো।" },
+  { day:30, title:"চ্যাম্পিয়ন!🏆",       sets:6, reps:25, hold:10, desc:"৩০তম দিন! তুমি করে দেখিয়েছ। আজ সেরা performance দাও।" },
+];
+
+var CHALLENGE_BADGES = [
+  { day:1,  icon:"🌱", name:"যাত্রা শুরু" },
+  { day:7,  icon:"⭐", name:"প্রথম সপ্তাহ" },
+  { day:14, icon:"🔥", name:"দুই সপ্তাহ" },
+  { day:15, icon:"🎯", name:"মাঝপথ যোদ্ধা" },
+  { day:21, icon:"💎", name:"তিন সপ্তাহ" },
+  { day:30, icon:"🏆", name:"চ্যাম্পিয়ন" },
+];
+
+function initChallenge() {
+  const ch = state.challenge || {};
+  if (!ch.started) {
+    document.getElementById('challenge-start-card').style.display = 'block';
+    document.getElementById('challenge-progress-card').style.display = 'none';
+    document.getElementById('challenge-completed-card').style.display = 'none';
+  } else if (ch.completedDays >= 30) {
+    document.getElementById('challenge-start-card').style.display = 'none';
+    document.getElementById('challenge-progress-card').style.display = 'none';
+    document.getElementById('challenge-completed-card').style.display = 'block';
+  } else {
+    document.getElementById('challenge-start-card').style.display = 'none';
+    document.getElementById('challenge-progress-card').style.display = 'block';
+    document.getElementById('challenge-completed-card').style.display = 'none';
+    renderChallengeDay();
+  }
+}
+
+function startChallenge() {
+  if (!isAppUnlocked()) { requireUnlock('৩০ দিনের চ্যালেঞ্জ'); return; }
+  if (!state.challenge) state.challenge = {};
+  state.challenge.started = true;
+  state.challenge.completedDays = 0;
+  state.challenge.completedList = [];
+  state.challenge.startDate = new Date().toDateString();
+  state.challenge.lastCompleted = null;
+  saveState();
+  initChallenge();
+  showToast('🚀 ৩০ দিনের চ্যালেঞ্জ শুরু হয়েছে!');
+}
+
+function renderChallengeDay() {
+  const ch = state.challenge;
+  const dayIndex = ch.completedDays; // 0-based
+  const task = CHALLENGE_TASKS[Math.min(dayIndex, 29)];
+  const today = new Date().toDateString();
+  const alreadyDone = ch.lastCompleted === today;
+
+  // Header
+  document.getElementById('challenge-day-label').textContent = 'দিন ' + (dayIndex + 1) + ' / ৩০';
+  document.getElementById('challenge-streak-num').textContent = ch.completedDays;
+  const pct = (ch.completedDays / 30 * 100).toFixed(1);
+  document.getElementById('challenge-progress-bar').style.width = pct + '%';
+
+  // Today task
+  document.getElementById('challenge-task-title').textContent = 'দিন ' + (dayIndex + 1) + ': ' + task.title;
+  document.getElementById('challenge-task-desc').textContent = task.desc;
+  document.getElementById('challenge-task-sets').textContent = '📋 ' + task.sets + ' সেট × ' + task.reps + ' রেপ';
+  document.getElementById('challenge-task-hold').textContent = '⏱️ ' + task.hold + ' সেকেন্ড hold';
+
+  // Complete button / done badge
+  const btn = document.getElementById('challenge-complete-btn');
+  const badge = document.getElementById('challenge-done-badge');
+  if (alreadyDone) {
+    btn.style.display = 'none';
+    badge.style.display = 'block';
+  } else {
+    btn.style.display = 'block';
+    badge.style.display = 'none';
+  }
+
+  // Badges
+  renderChallengeBadges();
+  // Grid
+  renderChallengeGrid();
+}
+
+function completeChallenge() {
+  const ch = state.challenge;
+  const today = new Date().toDateString();
+  if (ch.lastCompleted === today) { showToast('আজকের task ইতিমধ্যে সম্পন্ন!'); return; }
+
+  ch.completedDays = (ch.completedDays || 0) + 1;
+  ch.lastCompleted = today;
+  if (!ch.completedList) ch.completedList = [];
+  ch.completedList.push(today);
+  saveState();
+
+  // Check badge
+  const badge = CHALLENGE_BADGES.find(b => b.day === ch.completedDays);
+  if (badge) {
+    showToast('🎖️ নতুন ব্যাজ: ' + badge.icon + ' ' + badge.name + '!');
+    if (typeof burstConfetti === 'function') burstConfetti();
+  } else {
+    showToast('✅ দিন ' + ch.completedDays + ' সম্পন্ন!');
+  }
+
+  if (ch.completedDays >= 30) {
+    setTimeout(() => {
+      if (typeof burstConfetti === 'function') burstConfetti();
+      showToast('🏆 অভিনন্দন! ৩০ দিনের চ্যালেঞ্জ সম্পন্ন!');
+      initChallenge();
+    }, 800);
+  } else {
+    renderChallengeDay();
+  }
+}
+
+function renderChallengeBadges() {
+  const ch = state.challenge;
+  const container = document.getElementById('challenge-badges');
+  const earned = CHALLENGE_BADGES.filter(b => b.day <= ch.completedDays);
+  const locked = CHALLENGE_BADGES.filter(b => b.day > ch.completedDays);
+
+  container.innerHTML = earned.map(b =>
+    `<div style="display:flex;align-items:center;gap:6px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);border-radius:20px;padding:5px 10px;">
+      <span style="font-size:16px;">${b.icon}</span>
+      <span style="font-size:11px;color:var(--accent);font-weight:600;">${b.name}</span>
+    </div>`
+  ).join('') + locked.map(b =>
+    `<div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:5px 10px;opacity:0.4;">
+      <span style="font-size:16px;">🔒</span>
+      <span style="font-size:11px;color:var(--text3);">${b.name}</span>
+    </div>`
+  ).join('');
+}
+
+function renderChallengeGrid() {
+  const ch = state.challenge;
+  const container = document.getElementById('challenge-grid');
+  container.innerHTML = Array.from({length: 30}, (_, i) => {
+    const done = i < ch.completedDays;
+    const current = i === ch.completedDays;
+    const bg = done ? 'background:rgba(99,102,241,0.5);border-color:rgba(99,102,241,0.8);' :
+               current ? 'background:rgba(6,182,212,0.3);border-color:rgba(6,182,212,0.8);' :
+               'background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.1);';
+    const text = done ? '✓' : (i + 1);
+    const color = done ? 'color:#a5b4fc;' : current ? 'color:#06b6d4;font-weight:800;' : 'color:var(--text3);';
+    return `<div style="aspect-ratio:1;border-radius:8px;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:11px;${bg}${color}">${text}</div>`;
+  }).join('');
+}
+
+function resetChallenge() {
+  if (!confirm('চ্যালেঞ্জ রিসেট করবেন?')) return;
+  state.challenge = { started: false };
+  saveState();
+  initChallenge();
+}
+
+// ========================
+// MASTER UNLOCK SYSTEM
+// ========================
+const APP_UNLOCK_CODES = [
+  'MC-08J7-AXCP','MC-13RY-PYXG','MC-1F83-96W6','MC-1U06-Y9S7','MC-2DYR-ZFKJ',
+  'MC-3IEB-TEAJ','MC-3IZW-RGP4','MC-3Q1Q-96LZ','MC-3S3P-ZL79','MC-3XG2-176M',
+  'MC-40N8-ZA38','MC-4ODB-86I3','MC-4VCO-ALH3','MC-560X-4HW8','MC-5B5C-7WSI',
+  'MC-5PR0-D18E','MC-6BY8-YMN4','MC-6V2C-0VYG','MC-7T3I-F0Q9','MC-7YCR-UCX3',
+  'MC-86J8-UZ12','MC-8PNE-N4VB','MC-98GZ-H0AL','MC-9A46-JG8E','MC-9AMN-E4AU',
+  'MC-9C7V-O9X7','MC-9D78-E37I','MC-9DZS-HHZZ','MC-9IYW-6EDS','MC-9L9Q-KEF2',
+  'MC-B78U-YFVY','MC-BM3D-SIQ6','MC-BR1U-F36V','MC-BY8K-VPI0','MC-C19Z-VLNN',
+  'MC-C84D-BE90','MC-CFOC-DD58','MC-CQ3T-BI39','MC-CWUV-I7WC','MC-DIRF-B5DG',
+  'MC-ECMI-7YJW','MC-EHJX-K399','MC-EJFE-06GN','MC-EPUX-MSHS','MC-ERDI-2YZC',
+  'MC-F8XY-8LZQ','MC-FSR1-75T4','MC-FVSW-RPMG','MC-G4Q5-M7DB','MC-GCHE-4PRK',
+  'MC-GD49-0Q3C','MC-GH0N-6UM5','MC-GTDI-UEQO','MC-GUY4-8DHJ','MC-GY7U-6GUL',
+  'MC-HUIW-T3I8','MC-J2IX-SQFP','MC-J4LD-EG2Z','MC-J7ZV-NC7S','MC-JH0G-YFNA',
+  'MC-LHSX-WY1E','MC-LKJ6-BO12','MC-MBAH-2H0J','MC-MGII-MILC','MC-MGJU-AU03',
+  'MC-MNG5-8KOS','MC-MZLO-D2ZI','MC-N37O-7O46','MC-NFD7-A14M','MC-NFL0-38OA',
+  'MC-NOJ9-FMG0','MC-NW8I-AC3I','MC-OO1P-SPSA','MC-PX74-2Y7L','MC-Q0OL-AO0N',
+  'MC-Q2KE-UO7E','MC-RZ9P-9Y8D','MC-S1JO-312R','MC-S1W3-K2NI','MC-S3GK-PT9D',
+  'MC-S5N6-PSXN','MC-SE9B-W6GR','MC-T0ZO-LISZ','MC-T9M3-O8XI','MC-TAF9-C8BZ',
+  'MC-TDDF-NKYV','MC-TLIG-D29T','MC-UN2K-TYGA','MC-URIS-9RGY','MC-VF2A-4ATZ',
+  'MC-VRFM-QCU2','MC-WC3L-KOWQ','MC-XLUT-LS8T','MC-XOJL-QW5A','MC-XOSU-J692',
+  'MC-XSRS-N9E4','MC-YLKU-FM1M','MC-YZ1Z-CDMX','MC-Z03R-47ZH','MC-ZZ99-Z36Z'
+];
+
+function isAppUnlocked() {
+  return localStorage.getItem('mc_app_unlocked') === 'true';
+}
+
+function requireUnlock(featureName) {
+  if (isAppUnlocked()) return true;
+  showUnlockPrompt(featureName);
+  return false;
+}
+
+function showUnlockPrompt(featureName) {
+  const modal = document.getElementById('unlock-prompt-modal');
+  if (modal) {
+    document.getElementById('unlock-prompt-feature').textContent = featureName || 'এই ফিচার';
+    modal.style.display = 'flex';
+  }
+}
+
+function tryMasterUnlock() {
+  const input = document.getElementById('master-unlock-input');
+  const err = document.getElementById('master-unlock-error');
+  const code = input.value.trim().toUpperCase();
+  if (!code) { err.textContent = 'কোড দিন'; return; }
+  if (APP_UNLOCK_CODES.includes(code)) {
+    localStorage.setItem('mc_app_unlocked', 'true');
+    document.getElementById('unlock-prompt-modal').style.display = 'none';
+    if (typeof burstConfetti === 'function') burstConfetti();
+    showToast('🎉 অ্যাপ সম্পূর্ণ আনলক হয়েছে!');
+    updateHomeUI();
+  } else {
+    err.textContent = '❌ কোডটি সঠিক নয়। WhatsApp-এ যোগাযোগ করুন।';
+    input.style.borderColor = 'var(--red)';
+    setTimeout(() => { input.style.borderColor = 'var(--border)'; err.textContent = ''; }, 2500);
+  }
+}
+
+function closeUnlockPrompt() {
+  document.getElementById('unlock-prompt-modal').style.display = 'none';
+}
+
 // =====================
 // ONBOARDING
 // =====================
@@ -2419,11 +2631,10 @@ const screenTitles = {
 };
 
 function showScreen(id) {
-  // Hook (free) screens: home, kegel (core daily utility), edu (free books + previews), settings (no premium value)
-  // Premium (locked) screens: recovery, health, progress — deeper tracking/content that drives upgrade
-  const FREE_SCREENS = ['home', 'kegel', 'edu', 'settings'];
-  if (!FREE_SCREENS.includes(id) && localStorage.getItem('mc_app_unlocked') !== 'true') {
-    openAppLock();
+  // Lock premium screens
+  const premiumScreens = ['recovery', 'progress'];
+  if (premiumScreens.includes(id) && !isAppUnlocked()) {
+    requireUnlock(id === 'recovery' ? 'রিকভারি জার্নাল' : 'অগ্রগতি ট্র্যাকার');
     return;
   }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2435,95 +2646,9 @@ function showScreen(id) {
   if (id === 'progress') updateProgress();
   if (id === 'recovery') updateRecovery();
   if (id === 'health') updateHealth();
-  if (id === 'kegel') setTimeout(() => renderMuscleGuide(1), 100);
+  if (id === 'kegel') { setTimeout(() => renderMuscleGuide(1), 100); initChallenge(); }
   if (id === 'edu')   setTimeout(() => renderMuscleGuide(2), 100);
   window.scrollTo(0, 0);
-}
-
-function openAppLock() {
-  document.getElementById('app-lock-overlay').style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  window.scrollTo(0, 0);
-}
-
-function closeAppLock() {
-  document.getElementById('app-lock-overlay').style.display = 'none';
-  document.body.style.overflow = '';
-}
-
-function copyBkashNumber(btn) {
-  const number = '01723037327';
-  const originalHTML = btn.innerHTML;
-  const doFeedback = () => {
-    btn.innerHTML = '✅ কপি হয়েছে';
-    btn.style.background = 'rgba(34,197,94,0.18)';
-    btn.style.borderColor = 'rgba(34,197,94,0.4)';
-    btn.style.color = '#22c55e';
-    setTimeout(() => {
-      btn.innerHTML = originalHTML;
-      btn.style.background = 'rgba(236,72,153,0.18)';
-      btn.style.borderColor = 'rgba(236,72,153,0.4)';
-      btn.style.color = '#ec4899';
-    }, 1800);
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(number).then(doFeedback).catch(() => {
-      fallbackCopy(number);
-      doFeedback();
-    });
-  } else {
-    fallbackCopy(number);
-    doFeedback();
-  }
-}
-
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); } catch (e) {}
-  document.body.removeChild(ta);
-}
-
-function appLockSendWhatsApp() {
-  const msg = encodeURIComponent(
-    '🔑 *মাস্টার কন্ট্রোল — কম্বো Unlock অনুরোধ*\n\n' +
-    'আমি bKash-এ ৫০০ টাকা পেমেন্ট করেছি।\n' +
-    'Reference: COMBO\n\n' +
-    'পেমেন্টের স্ক্রিনশট সংযুক্ত করছি।\n\n' +
-    'দয়া করে আমার Unlock Code পাঠান। 🙏'
-  );
-  window.open(`https://wa.me/${FB_WA}?text=${msg}`, '_blank');
-}
-
-function appTryUnlock() {
-  const code = document.getElementById('app-unlock-input').value.trim().toUpperCase();
-  if (!code) { showToast('❌ কোড দিন'); return; }
-  const btn = document.getElementById('app-unlock-btn');
-  const originalBtnHTML = btn.innerHTML;
-  btn.innerHTML = '⏳ যাচাই করা হচ্ছে...';
-  btn.disabled = true;
-  setTimeout(() => {
-    if (MC_VALID_CODES.includes(code)) {
-      localStorage.setItem('mc_app_unlocked', 'true');
-      localStorage.setItem('mc_recovery_unlocked', 'true'); // combo includes the book
-      closeAppLock();
-      showToast('🎉 অভিনন্দন! পুরো অ্যাপ আনলক হয়েছে');
-      if (typeof burstConfetti === 'function') burstConfetti();
-      btn.innerHTML = originalBtnHTML;
-      btn.disabled = false;
-    } else {
-      showToast('❌ কোডটি সঠিক নয়। WhatsApp-এ যোগাযোগ করুন।');
-      const inp = document.getElementById('app-unlock-input');
-      inp.style.borderColor = 'var(--red)';
-      setTimeout(() => { inp.style.borderColor = 'var(--border)'; }, 2000);
-      btn.innerHTML = originalBtnHTML;
-      btn.disabled = false;
-    }
-  }, 400);
 }
 
 // =====================
@@ -2571,6 +2696,8 @@ function checkDayReset() {
 // =====================
 // HOME
 // =====================
+function updateHomeUI() { updateHome(); }
+
 function updateHome() {
   document.getElementById('home-username').textContent = state.user.name || 'বন্ধু';
   document.getElementById('home-streak-num').textContent = state.streak;
@@ -2612,6 +2739,7 @@ function updateHome() {
 }
 
 function toggleHabit(row, key) {
+  if (!isAppUnlocked()) { requireUnlock('হ্যাবিট ট্র্যাকার'); return; }
   state.todayHabits[key] = !state.todayHabits[key];
   const check = document.getElementById('habit-' + key);
   if (state.todayHabits[key]) { check.classList.add('done'); check.textContent = '✓'; }
@@ -2709,6 +2837,7 @@ function selectLevel(el, level) {
 function startKegel() { startKegelSession('morning'); }
 
 function startKegelSession(name) {
+  if (!isAppUnlocked()) { requireUnlock('কেগেল সেশন'); return; }
   sessionName = name;
   document.getElementById('kegel-session').classList.add('active');
   currentSet = 0;
@@ -4367,27 +4496,27 @@ function showToast(msg) {
 // =====================
 // FLIPBOOK
 // =====================
-const BOOK_PAGES = [
-  'Images/tomarshokti-01.jpg',
-  'Images/tomarshokti-02.jpg',
-  'Images/tomarshokti-03.jpg',
-  'Images/tomarshokti-04.jpg',
-  'Images/tomarshokti-05.jpg',
-  'Images/tomarshokti-06.jpg',
-  'Images/tomarshokti-07.jpg',
-  'Images/tomarshokti-08.jpg',
-  'Images/tomarshokti-09.jpg',
-  'Images/tomarshokti-10.jpg',
-  'Images/tomarshokti-11.jpg',
-  'Images/tomarshokti-12.jpg',
-  'Images/tomarshokti-13.jpg',
-  'Images/tomarshokti-14.jpg',
-  'Images/tomarshokti-15.jpg',
-  'Images/tomarshokti-16.jpg',
-  'Images/tomarshokti-17.jpg',
-  'Images/tomarshokti-18.jpg',
-  'Images/tomarshokti-19.jpg',
-  'Images/tomarshokti-20.jpg'
+var BOOK_PAGES = [
+  'images/tomarshokti-01.jpg',
+  'images/tomarshokti-02.jpg',
+  'images/tomarshokti-03.jpg',
+  'images/tomarshokti-04.jpg',
+  'images/tomarshokti-05.jpg',
+  'images/tomarshokti-06.jpg',
+  'images/tomarshokti-07.jpg',
+  'images/tomarshokti-08.jpg',
+  'images/tomarshokti-09.jpg',
+  'images/tomarshokti-10.jpg',
+  'images/tomarshokti-11.jpg',
+  'images/tomarshokti-12.jpg',
+  'images/tomarshokti-13.jpg',
+  'images/tomarshokti-14.jpg',
+  'images/tomarshokti-15.jpg',
+  'images/tomarshokti-16.jpg',
+  'images/tomarshokti-17.jpg',
+  'images/tomarshokti-18.jpg',
+  'images/tomarshokti-19.jpg',
+  'images/tomarshokti-20.jpg'
 ];
 
 let fbFreeCurrentPage = 0;
@@ -4396,84 +4525,46 @@ let fbFreeTouchStartX = 0;
 let fbFreeTitle = '';
 
 function openFlipbookFree(url, title) {
-  // Check if this is a local book (url starts with 'local:')
-  if (url === 'local:tomarshokti') {
-    fbFreeTitle = title;
-    fbFreeCurrentPage = 0;
-    fbFreeZoom = 1;
-    document.getElementById('flipbook-free-title').textContent = '📖 ' + title;
-    document.getElementById('fb-free-img').style.transform = 'scale(1)';
-    fbFreeShowPage(0);
-    const modal = document.getElementById('flipbook-modal-free');
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-    fbFreeSetupTouch();
-    return;
-  }
-  // Fallback: browser
-  window.open(url, '_blank');
+  if (url !== 'local:tomarshokti') { window.open(url, '_blank'); return; }
+  const pages = BOOK_PAGES;
+  document.getElementById('flipbook-free-title').textContent = '📖 ' + title;
+  document.getElementById('flipbook-free-page-counter').textContent = 'মোট ' + pages.length + ' পেজ';
+  const container = document.getElementById('fb-free-pages-container');
+  container.innerHTML = '';
+  pages.forEach((src, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#111;';
+    const pageNum = document.createElement('div');
+    pageNum.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);color:#ccc;font-size:10px;padding:2px 8px;border-radius:10px;z-index:2;';
+    pageNum.textContent = (i+1) + ' / ' + pages.length;
+    const img = document.createElement('img');
+    img.src = src;
+    img.draggable = false;
+    img.style.cssText = 'width:100%;display:block;-webkit-user-select:none;user-select:none;';
+    img.oncontextmenu = () => false;
+    wrapper.appendChild(pageNum);
+    wrapper.appendChild(img);
+    container.appendChild(wrapper);
+  });
+  const modal = document.getElementById('flipbook-modal-free');
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('fb-free-scroll-area').scrollTop = 0;
 }
 
-function fbFreeShowPage(n) {
-  const total = BOOK_PAGES.length;
-  fbFreeCurrentPage = Math.max(0, Math.min(n, total - 1));
-  const img = document.getElementById('fb-free-img');
-
-  // Flip animation
-  img.style.opacity = '0';
-  img.style.transform = `scale(${fbFreeZoom}) rotateY(15deg)`;
-  setTimeout(() => {
-    img.src = BOOK_PAGES[fbFreeCurrentPage];
-    img.style.transform = `scale(${fbFreeZoom}) rotateY(0deg)`;
-    img.style.opacity = '1';
-  }, 150);
-
-  // Update counter
-  const pct = ((fbFreeCurrentPage + 1) / total) * 100;
-  document.getElementById('fb-free-progress').style.width = pct + '%';
-  document.getElementById('fb-free-page-num').textContent = (fbFreeCurrentPage + 1) + ' / ' + total;
-  document.getElementById('flipbook-free-page-counter').textContent = 'পেজ ' + (fbFreeCurrentPage + 1) + '/' + total;
-
-  // Button states
-  document.getElementById('fb-free-prev-btn').style.opacity = fbFreeCurrentPage === 0 ? '0.3' : '1';
-  document.getElementById('fb-free-next-btn').style.opacity = fbFreeCurrentPage === total - 1 ? '0.3' : '1';
-}
-
-function fbFreeNext() {
-  if (fbFreeCurrentPage < BOOK_PAGES.length - 1) fbFreeShowPage(fbFreeCurrentPage + 1);
-}
-function fbFreePrev() {
-  if (fbFreeCurrentPage > 0) fbFreeShowPage(fbFreeCurrentPage - 1);
-}
-function fbFreeZoomIn() {
-  fbFreeZoom = Math.min(fbFreeZoom + 0.2, 3);
-  document.getElementById('fb-free-img').style.transform = `scale(${fbFreeZoom})`;
-}
-function fbFreeZoomOut() {
-  fbFreeZoom = Math.max(fbFreeZoom - 0.2, 0.5);
-  document.getElementById('fb-free-img').style.transform = `scale(${fbFreeZoom})`;
-}
 function fbFreeClose() {
   document.getElementById('flipbook-modal-free').style.display = 'none';
-  document.getElementById('fb-free-img').src = '';
   document.body.style.overflow = '';
 }
-function fbFreeSetupTouch() {
-  const area = document.getElementById('fb-free-page-area');
-  area.ontouchstart = (e) => { fbFreeTouchStartX = e.touches[0].clientX; };
-  area.ontouchend = (e) => {
-    const dx = e.changedTouches[0].clientX - fbFreeTouchStartX;
-    if (Math.abs(dx) > 50) { dx < 0 ? fbFreeNext() : fbFreePrev(); }
-  };
-  // Keyboard support
-  document.onkeydown = (e) => {
-    const modal = document.getElementById('flipbook-modal-free');
-    if (modal.style.display === 'none') return;
-    if (e.key === 'ArrowRight') fbFreeNext();
-    if (e.key === 'ArrowLeft') fbFreePrev();
-    if (e.key === 'Escape') fbFreeClose();
-  };
-}
+
+// Stubs — no longer needed
+function fbFreeShowPage(n) {}
+function fbFreeNext() {}
+function fbFreePrev() {}
+function fbFreeZoomIn() {}
+function fbFreeZoomOut() {}
+function fbFreeSetupTouch() {}
 
 // =====================
 // START
@@ -4512,43 +4603,55 @@ function dismissDisclaimer() {
 }
 
 // "মাস্টার কন্ট্রোল: পবিত্রতার পথে" - full premium book (46 pages)
-const MASTERCONTROL_PAGES = [
-  'Images/mastercontrol-01.jpg', 'Images/mastercontrol-02.jpg', 'Images/mastercontrol-03.jpg',
-  'Images/mastercontrol-04.jpg', 'Images/mastercontrol-05.jpg', 'Images/mastercontrol-06.jpg',
-  'Images/mastercontrol-07.jpg', 'Images/mastercontrol-08.jpg', 'Images/mastercontrol-09.jpg',
-  'Images/mastercontrol-10.jpg', 'Images/mastercontrol-11.jpg', 'Images/mastercontrol-12.jpg',
-  'Images/mastercontrol-13.jpg', 'Images/mastercontrol-14.jpg', 'Images/mastercontrol-15.jpg',
-  'Images/mastercontrol-16.jpg', 'Images/mastercontrol-17.jpg', 'Images/mastercontrol-18.jpg',
-  'Images/mastercontrol-19.jpg', 'Images/mastercontrol-20.jpg', 'Images/mastercontrol-21.jpg',
-  'Images/mastercontrol-22.jpg', 'Images/mastercontrol-23.jpg', 'Images/mastercontrol-24.jpg',
-  'Images/mastercontrol-25.jpg', 'Images/mastercontrol-26.jpg', 'Images/mastercontrol-27.jpg',
-  'Images/mastercontrol-28.jpg', 'Images/mastercontrol-29.jpg', 'Images/mastercontrol-30.jpg',
-  'Images/mastercontrol-31.jpg', 'Images/mastercontrol-32.jpg', 'Images/mastercontrol-33.jpg',
-  'Images/mastercontrol-34.jpg', 'Images/mastercontrol-35.jpg', 'Images/mastercontrol-36.jpg',
-  'Images/mastercontrol-37.jpg', 'Images/mastercontrol-38.jpg', 'Images/mastercontrol-39.jpg',
-  'Images/mastercontrol-40.jpg', 'Images/mastercontrol-41.jpg', 'Images/mastercontrol-42.jpg',
-  'Images/mastercontrol-43.jpg', 'Images/mastercontrol-44.jpg', 'Images/mastercontrol-45.jpg',
-  'Images/mastercontrol-46.jpg'
+var MASTERCONTROL_PAGES = [
+  'images/mastercontrol-01.jpg', 'images/mastercontrol-02.jpg', 'images/mastercontrol-03.jpg',
+  'images/mastercontrol-04.jpg', 'images/mastercontrol-05.jpg', 'images/mastercontrol-06.jpg',
+  'images/mastercontrol-07.jpg', 'images/mastercontrol-08.jpg', 'images/mastercontrol-09.jpg',
+  'images/mastercontrol-10.jpg', 'images/mastercontrol-11.jpg', 'images/mastercontrol-12.jpg',
+  'images/mastercontrol-13.jpg', 'images/mastercontrol-14.jpg', 'images/mastercontrol-15.jpg',
+  'images/mastercontrol-16.jpg', 'images/mastercontrol-17.jpg', 'images/mastercontrol-18.jpg',
+  'images/mastercontrol-19.jpg', 'images/mastercontrol-20.jpg', 'images/mastercontrol-21.jpg',
+  'images/mastercontrol-22.jpg', 'images/mastercontrol-23.jpg', 'images/mastercontrol-24.jpg',
+  'images/mastercontrol-25.jpg', 'images/mastercontrol-26.jpg', 'images/mastercontrol-27.jpg',
+  'images/mastercontrol-28.jpg', 'images/mastercontrol-29.jpg', 'images/mastercontrol-30.jpg',
+  'images/mastercontrol-31.jpg', 'images/mastercontrol-32.jpg', 'images/mastercontrol-33.jpg',
+  'images/mastercontrol-34.jpg', 'images/mastercontrol-35.jpg', 'images/mastercontrol-36.jpg',
+  'images/mastercontrol-37.jpg', 'images/mastercontrol-38.jpg', 'images/mastercontrol-39.jpg',
+  'images/mastercontrol-40.jpg', 'images/mastercontrol-41.jpg', 'images/mastercontrol-42.jpg',
+  'images/mastercontrol-43.jpg', 'images/mastercontrol-44.jpg', 'images/mastercontrol-45.jpg',
+  'images/mastercontrol-46.jpg'
 ];
 
-// Free preview: 5 hand-picked, most compelling pages of the real book
-// (cover hook, emotional opening, provocative question, Quranic hope, Master Control framework reveal)
-const PREVIEW_PAGES = [
-  MASTERCONTROL_PAGES[0],   // page 1  - cover (first impression, branding)
-  MASTERCONTROL_PAGES[3],   // page 4  - "যখন তুমি একা থাকো" - raw emotional hook, reader sees themselves
-  MASTERCONTROL_PAGES[8],   // page 9  - "স্বাধীনতা আসলে কী?" - provocative reframe, makes them think
-  MASTERCONTROL_PAGES[15],  // page 16 - তওবা বনাম অপরাধবোধ + Quran ayah - hope, emotional relief
-  MASTERCONTROL_PAGES[32],  // page 33 - "কেন এই বইয়ের নাম মাস্টার কন্ট্রোল" - teases the solution framework
-                              //           without revealing the full M-A-S-T-E-R breakdown (keeps buying incentive)
+// "রিকভারি সংস্করণ" pages (145 pages — add images when ready)
+var RECOVERY_PAGES = Array.from({length: 145}, (_, i) =>
+  'images/recovery-' + String(i+1).padStart(2,'0') + '.jpg'
+);
+
+// Hook preview pages — defined after MASTERCONTROL_PAGES below
+
+// Hook preview pages — defined here after MASTERCONTROL_PAGES
+var PURITY_HOOK_PAGES = [
+  MASTERCONTROL_PAGES[3],
+  MASTERCONTROL_PAGES[9],
+  MASTERCONTROL_PAGES[15],
+  MASTERCONTROL_PAGES[33],
+  MASTERCONTROL_PAGES[42],
 ];
+var RECOVERY_HOOK_PAGES = [
+  RECOVERY_PAGES[8],
+  RECOVERY_PAGES[15],
+  RECOVERY_PAGES[39],
+  RECOVERY_PAGES[77],
+  RECOVERY_PAGES[104],
+];
+var PREVIEW_PAGES = PURITY_HOOK_PAGES;
 
 // ========================
 // FLIPBOOK SYSTEM
 // ========================
 const FB_WA = '8801723037327';
 const FB_PDF_LINK = '';
-// Single unlock code system: ৫০০ টাকা কম্বো — unlocks both books + the whole app
-const MC_VALID_CODES = ['COMBO500','COMBO-VIP1','COMBO-VIP2','COMBO-VIP3','MCAPP01','MCAPP02','MCAPP03'];
+const FB_VALID_CODES = ['MCR2024','MCR-VIP1','MCR-VIP2','MCR-VIP3','MASTER01','MASTER02','MASTER03','MASTER04','MASTER05'];
 
 
 let fbPreviewTouchX = 0;
@@ -4558,7 +4661,7 @@ function initFlipbookPages() {
   // Pages are loaded from MASTERCONTROL_PAGES (full book) / PREVIEW_PAGES (free 5 pages)
   if (typeof MASTERCONTROL_PAGES !== 'undefined') {
     // Set book cover in edu screen
-    const coverImg = document.getElementById('mc-cover-img');
+    const coverImg = document.getElementById('recovery-cover-img');
     if (coverImg) coverImg.src = MASTERCONTROL_PAGES[0];
     // Set blur preview (a locked page from deeper in the book)
     const blurImg = document.getElementById('fb-blur-img');
@@ -4566,24 +4669,65 @@ function initFlipbookPages() {
   }
 }
 
-function openFlipbook() {
-  document.getElementById('flipbook-modal').style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  fbPreviewPage = 0;
-  // Check if already unlocked - load full book, else free preview
-  const isUnlocked = localStorage.getItem('mc_recovery_unlocked') === 'true';
-  fbPages = isUnlocked ? MASTERCONTROL_PAGES : PREVIEW_PAGES;
-  fbRenderPage(0);
-  if (isUnlocked) {
-    fbShowSuccess();
+function openFlipbook(bookKey) {
+  const unlocked = isAppUnlocked();
+  let bookPages, hookPages, title;
+
+  if (bookKey === 'recovery') {
+    bookPages = RECOVERY_PAGES;
+    hookPages = RECOVERY_HOOK_PAGES;
+    title = '📖 রিকভারি সংস্করণ';
+  } else {
+    bookPages = MASTERCONTROL_PAGES;
+    hookPages = PURITY_HOOK_PAGES;
+    title = '📖 পবিত্রতার পথে';
   }
-  // Swipe support
-  const wrap = document.getElementById('fb-flip-wrap');
-  wrap.addEventListener('touchstart', e => { fbPreviewTouchX = e.touches[0].clientX; }, {passive:true});
-  wrap.addEventListener('touchend', e => {
-    const diff = fbPreviewTouchX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) fbChangePage(diff > 0 ? 1 : -1);
-  }, {passive:true});
+
+  fbPages = unlocked ? bookPages : hookPages;
+
+  const titleEl = document.getElementById('fb-modal-title');
+  if (titleEl) titleEl.textContent = title;
+
+  // Build vertical scroll pages
+  const container = document.getElementById('fb-pages-container');
+  container.innerHTML = '';
+  fbPages.forEach((src, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#111;';
+    const pageNum = document.createElement('div');
+    pageNum.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);color:#ccc;font-size:10px;padding:2px 8px;border-radius:10px;z-index:2;';
+    pageNum.textContent = (i+1) + ' / ' + fbPages.length;
+    const img = document.createElement('img');
+    img.src = src;
+    img.draggable = false;
+    img.style.cssText = 'width:100%;display:block;-webkit-user-select:none;user-select:none;';
+    img.oncontextmenu = () => false;
+    wrapper.appendChild(pageNum);
+    wrapper.appendChild(img);
+    container.appendChild(wrapper);
+  });
+
+  // If locked, add unlock CTA at bottom
+  if (!unlocked) {
+    const cta = document.createElement('div');
+    cta.style.cssText = 'margin:16px 0;padding:24px 20px;background:linear-gradient(135deg,rgba(99,102,241,0.15),rgba(6,182,212,0.1));border:1px solid rgba(99,102,241,0.3);border-radius:16px;text-align:center;';
+    const bookTitle = titleEl ? titleEl.textContent : 'বই';
+    cta.innerHTML = `
+      <div style="font-size:28px;margin-bottom:10px;">🔒</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px;">বাকি ${bookPages.length - hookPages.length} পেজ পড়তে আনলক করুন</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6;">মাস্টার কন্ট্রোল প্যাকেজ কিনলে <strong>দুটি বই</strong> ও সব premium ফিচার একসাথে পাবেন।</div>
+      <button onclick="closeFlipbook(); showUnlockPrompt('${bookTitle}')" style="background:var(--accent);color:#fff;border:none;border-radius:12px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;width:100%;">🔓 আনলক করুন</button>
+      <button onclick="window.open('https://wa.me/8801723037327?text=' + encodeURIComponent('মাস্টার কন্ট্রোল প্যাকেজ কিনতে চাই 🙏'), '_blank')" style="background:rgba(37,211,102,0.15);color:#25d366;border:1px solid rgba(37,211,102,0.3);border-radius:12px;padding:11px 20px;font-size:13px;cursor:pointer;font-family:inherit;width:100%;">💬 WhatsApp-এ যোগাযোগ করুন</button>
+    `;
+    container.appendChild(cta);
+  }
+
+  document.getElementById('fb-page-num').textContent = unlocked ? ('মোট ' + fbPages.length + ' পেজ') : ('৫ টি preview');
+  const modal = document.getElementById('flipbook-modal');
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  document.body.style.overflow = 'hidden';
+  document.getElementById('fb-scroll-area').scrollTop = 0;
 }
 
 function closeFlipbook() {
@@ -4591,88 +4735,11 @@ function closeFlipbook() {
   document.body.style.overflow = '';
 }
 
-function fbRenderPage(idx) {
-  if (!fbPages.length) return;
-  document.getElementById('fb-img').src = fbPages[idx];
-  document.getElementById('fb-page-num').textContent = `${idx+1} / ${fbPages.length}`;
-  document.getElementById('fb-prev').disabled = idx === 0;
-  document.getElementById('fb-next').disabled = idx === fbPages.length - 1;
-  // Dots
-  const dots = document.getElementById('fb-dots');
-  dots.innerHTML = Array.from({length: fbPages.length}, (_, i) =>
-    `<span style="display:inline-block;width:${i===idx?16:6}px;height:6px;border-radius:3px;
-      background:${i===idx?'var(--accent)':'var(--border)'};margin:0 2px;transition:all .3s;"></span>`
-  ).join('');
-}
+// Stubs — vertical scroll reader used instead
+function fbRenderPage(idx) {}
+function fbChangePage(dir) {}
 
-function fbChangePage(dir) {
-  const next = fbPreviewPage + dir;
-  if (next < 0 || next >= fbPages.length) return;
-  const inner = document.getElementById('fb-flip-inner');
-  const anim = dir > 0 ? 'flipLeft' : 'flipRight';
-  inner.style.animation = `${anim} 0.45s ease forwards`;
-  setTimeout(() => {
-    fbPreviewPage = next;
-    fbRenderPage(fbPreviewPage);
-    inner.style.animation = '';
-  }, 220);
-}
-
-function fbSendWhatsApp() {
-  const msg = encodeURIComponent(
-    '🔑 *মাস্টার কন্ট্রোল — কম্বো Unlock অনুরোধ*\n\n' +
-    'আমি bKash-এ ৫০০ টাকা পেমেন্ট করেছি।\n' +
-    'Reference: COMBO\n\n' +
-    'পেমেন্টের স্ক্রিনশট সংযুক্ত করছি।\n\n' +
-    'দয়া করে আমার Unlock Code পাঠান। 🙏'
-  );
-  window.open(`https://wa.me/${FB_WA}?text=${msg}`, '_blank');
-}
-
-function fbTryUnlock() {
-  const code = document.getElementById('fb-unlock-input').value.trim().toUpperCase();
-  if (!code) { showToast('❌ কোড দিন'); return; }
-  const btn = document.getElementById('fb-unlock-btn');
-  const originalBtnHTML = btn.innerHTML;
-  btn.innerHTML = '⏳ যাচাই করা হচ্ছে...';
-  btn.disabled = true;
-  setTimeout(() => {
-    if (MC_VALID_CODES.includes(code)) {
-      localStorage.setItem('mc_recovery_unlocked', 'true');
-      localStorage.setItem('mc_app_unlocked', 'true');
-      fbShowSuccess();
-      if (typeof burstConfetti === 'function') burstConfetti();
-      btn.innerHTML = originalBtnHTML;
-      btn.disabled = false;
-    } else {
-      showToast('❌ কোডটি সঠিক নয়। WhatsApp-এ যোগাযোগ করুন।');
-      const inp = document.getElementById('fb-unlock-input');
-      inp.style.borderColor = 'var(--red)';
-      setTimeout(() => { inp.style.borderColor = 'var(--border)'; }, 2000);
-      btn.innerHTML = originalBtnHTML;
-      btn.disabled = false;
-    }
-  }, 400);
-}
-
-function fbShowSuccess() {
-  document.getElementById('fb-lock-preview').style.display = 'none';
-  document.getElementById('fb-payment-section').style.display = 'none';
-  document.getElementById('fb-success').style.display = 'block';
-  // Switch the preview area to the full unlocked book
-  fbPages = MASTERCONTROL_PAGES;
-  fbPreviewPage = 0;
-  fbRenderPage(0);
-}
-
-function fbDownload() {
-  if (!FB_PDF_LINK) {
-    showToast('📥 PDF লিংক শীঘ্রই যোগ হবে — WhatsApp-এ যোগাযোগ করুন');
-    fbSendWhatsApp();
-    return;
-  }
-  window.open(FB_PDF_LINK, '_blank');
-}
+// Per-book unlock removed — master unlock used instead
 
 // Flipbook page animations (CSS injected via JS)
 (function() {
@@ -4731,5 +4798,28 @@ function dismissInstallBanner() {
   const banner = document.getElementById('install-banner');
   if (banner) banner.style.display = 'none';
 }</script>
+
+<!-- MASTER UNLOCK PROMPT MODAL -->
+<div id="unlock-prompt-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 22px;max-width:360px;width:100%;text-align:center;">
+    <div style="font-size:40px;margin-bottom:14px;">🔐</div>
+    <div style="font-size:19px;font-weight:800;margin-bottom:6px;font-family:var(--font-serif);">Premium ফিচার</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:6px;" id="unlock-prompt-feature">এই ফিচার</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:22px;line-height:1.6;">আনলক কোড দিলে সব premium ফিচার ও দুটি বই একসাথে পাবেন।</div>
+
+    <input id="master-unlock-input" type="text" placeholder="আপনার কোড দিন..."
+      style="width:100%;box-sizing:border-box;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--surface);color:var(--text1);font-size:14px;font-family:inherit;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;outline:none;"
+      autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+    <div id="master-unlock-error" style="font-size:12px;color:var(--red);min-height:18px;margin-bottom:10px;"></div>
+
+    <button onclick="tryMasterUnlock()" style="width:100%;padding:14px;background:var(--accent);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;">🔓 আনলক করুন</button>
+    <button onclick="window.open('https://wa.me/8801723037327?text=' + encodeURIComponent('মাস্টার কন্ট্রোল প্যাকেজ কিনতে চাই 🙏'), '_blank')"
+      style="width:100%;padding:12px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);border-radius:12px;color:#25d366;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:10px;">
+      💬 কিনতে WhatsApp করুন
+    </button>
+    <button onclick="closeUnlockPrompt()" style="background:none;border:none;color:var(--text3);font-size:13px;cursor:pointer;padding:6px;font-family:inherit;">বাতিল করুন</button>
+  </div>
+</div>
+
 </body>
 </html>
