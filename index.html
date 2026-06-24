@@ -60,18 +60,36 @@
 
   /* TOP BAR */
   .topbar {
-    background:rgba(14,21,32,0.95);
+    background:linear-gradient(180deg,rgba(10,16,26,0.98),rgba(8,13,24,0.95));
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    padding:14px 20px;
+    padding:12px 16px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    border-bottom:1px solid rgba(255,255,255,0.05);
+    border-bottom:1px solid rgba(99,102,241,0.18);
     position:sticky; top:0; z-index:100;
+    box-shadow:0 2px 20px rgba(0,0,0,0.4);
   }
-  .topbar-title { font-size:17px; font-weight:700; font-family:var(--font-serif); letter-spacing:0.01em; }
-  .topbar-subtitle { font-size:11px; color:var(--text3); margin-top:1px; font-family:var(--font-ui); }
+  .topbar::after {
+    content:'';
+    position:absolute;
+    bottom:0; left:0; right:0;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(99,102,241,0.4),transparent);
+  }
+  .topbar-logo-wrap {
+    display:flex; align-items:center; gap:9px;
+  }
+  .topbar-logo-img {
+    width:34px; height:34px;
+    object-fit:contain;
+    border-radius:8px;
+    filter:drop-shadow(0 0 8px rgba(99,102,241,0.5));
+    flex-shrink:0;
+  }
+  .topbar-title { font-size:16px; font-weight:700; font-family:var(--font-serif); letter-spacing:0.01em; }
+  .topbar-subtitle { font-size:10px; color:var(--accent); margin-top:1px; font-family:var(--font-ui); font-weight:600; letter-spacing:0.03em; }
   .topbar-icon { font-size:22px; }
 
   /* =====================
@@ -260,15 +278,24 @@
     padding:24px;
     position:relative;
     overflow:hidden;
-    border:1px solid rgba(99,102,241,0.2);
-    box-shadow: 0 8px 32px rgba(99,102,241,0.12);
+    border:1px solid rgba(99,102,241,0.25);
+    box-shadow: 0 8px 32px rgba(99,102,241,0.18), 0 0 0 1px rgba(99,102,241,0.08);
+    background:linear-gradient(135deg,#0d1a2e,#101525);
   }
   .gradient-card::before {
     content:'';
     position:absolute; inset:0;
-    background:linear-gradient(135deg, rgba(99,102,241,0.18) 0%, rgba(139,92,246,0.12) 50%, rgba(6,182,212,0.08) 100%);
+    background:linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(139,92,246,0.10) 50%, rgba(6,182,212,0.06) 100%);
   }
-  .gradient-card-content { position:relative; }
+  .gradient-card::after {
+    content:'';
+    position:absolute;
+    top:-60px; right:-60px;
+    width:200px; height:200px;
+    background:radial-gradient(circle,rgba(99,102,241,0.12),transparent 70%);
+    pointer-events:none;
+  }
+  .gradient-card-content { position:relative; z-index:1; }
 
   /* STREAK RING */
   .streak-ring {
@@ -338,13 +365,20 @@
 
   /* Card press effect */
   .card {
-    background:var(--card);
-    border:1px solid rgba(255,255,255,0.05);
+    background:linear-gradient(160deg,#0f1d2e,#0a1520);
+    border:1px solid rgba(99,102,241,0.12);
     border-radius:var(--radius);
     padding:20px;
     margin:0 14px 12px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position:relative; overflow:hidden;
+  }
+  .card::before {
+    content:'';
+    position:absolute;
+    top:0; left:10%; right:10%; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(99,102,241,0.4),transparent);
   }
   .card:active {
     transform: scale(0.985);
@@ -368,14 +402,22 @@
   /* STAT GRID */
   .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 14px 14px; }
   .stat-box {
-    background:var(--card);
-    border:1px solid rgba(255,255,255,0.05);
+    background:linear-gradient(160deg,#0f1d2e,#0a1520);
+    border:1px solid rgba(255,255,255,0.07);
+    border-top:2px solid var(--stat-color, var(--accent));
     border-radius:var(--radius-sm);
     padding:16px;
     text-align:center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    position:relative; overflow:hidden;
   }
-  .stat-val { font-size:26px; font-weight:700; font-family:var(--font-serif); }
+  .stat-box::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0; height:40px;
+    background:linear-gradient(180deg,rgba(99,102,241,0.06),transparent);
+  }
+  .stat-val { font-size:26px; font-weight:700; font-family:var(--font-serif); position:relative; }
   .stat-lbl { font-size:11px; color:var(--text3); margin-top:4px; font-family:var(--font-ui); }
 
   /* PROGRESS BAR */
@@ -1043,17 +1085,20 @@
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:10px;">
       <button id="menu-btn" onclick="toggleSidebar()">☰</button>
-      <div>
-        <div style="display:flex;align-items:center;gap:8px;">
+      <div class="topbar-logo-wrap">
+        <img src="images/logo-0ab19f16.png" class="topbar-logo-img" alt="MC"
+          loading="eager"
+          onerror="this.style.display='none'">
+        <div>
           <div class="topbar-title" id="topbar-title">🏠 হোম</div>
+          <div class="topbar-subtitle" id="topbar-date"></div>
         </div>
-        <div class="topbar-subtitle" id="topbar-date"></div>
       </div>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
       <span id="streak-badge" style="font-size:13px; font-weight:600; color:var(--gold);">🔥 0</span>
       <button onclick="openEmergency()" style="background:linear-gradient(135deg,#dc2626,#991b1b);border:none;border-radius:10px;padding:5px 10px;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(220,38,38,0.4);">
-        🆘 জরুরি সহায়তা
+        🆘 জরুরি
       </button>
     </div>
   </div>
@@ -1134,19 +1179,19 @@
     </div>
 
     <div class="stat-grid">
-      <div class="stat-box">
+      <div class="stat-box" style="--stat-color:var(--accent);">
         <div class="stat-val" style="color:var(--accent);" id="home-total-sessions">0</div>
         <div class="stat-lbl">মোট সেশন</div>
       </div>
-      <div class="stat-box">
+      <div class="stat-box" style="--stat-color:var(--green);">
         <div class="stat-val" style="color:var(--green);" id="home-today-done">0/3</div>
         <div class="stat-lbl">আজকের সেশন</div>
       </div>
-      <div class="stat-box">
+      <div class="stat-box" style="--stat-color:var(--gold);">
         <div class="stat-val" style="color:var(--gold);" id="home-badges">0</div>
         <div class="stat-lbl">অর্জিত ব্যাজ</div>
       </div>
-      <div class="stat-box">
+      <div class="stat-box" style="--stat-color:var(--accent3);">
         <div class="stat-val" style="color:var(--accent3);" id="home-water">0/8</div>
         <div class="stat-lbl">পানি (গ্লাস)</div>
       </div>
