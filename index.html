@@ -649,7 +649,7 @@
   <div class="disclaimer-hero">
     <div style="position:relative; z-index:1;">
       <div class="disclaimer-badge">🌿 প্রাকৃতিক ও বিজ্ঞানসম্মত পদ্ধতি</div>
-      <div class="disclaimer-icon"><img src="images/logo-0ab19f16.png" alt="Master Control" style="width:120px;height:auto;object-fit:contain;"></div>
+      <div class="disclaimer-icon"><img src="images/logo-0ab19f16.png" alt="Master Control" style="width:180px;height:auto;object-fit:contain;"></div>
       <div class="disclaimer-title">মাস্টার কন্ট্রোল</div>
       <div class="disclaimer-subtitle">শুরু করার আগে কিছু গুরুত্বপূর্ণ কথা</div>
     </div>
@@ -715,7 +715,7 @@
 
 <!-- ONBOARDING -->
 <div id="onboarding">
-  <img src="images/logo-0ab19f16.png" alt="Master Control" style="width:130px;height:auto;object-fit:contain;margin-bottom:16px;display:block;">
+  <img src="images/logo-0ab19f16.png" alt="Master Control" style="width:200px;height:auto;object-fit:contain;margin-bottom:16px;display:block;">
   <div class="onboard-title">মাস্টার কন্ট্রোল</div>
   <div class="onboard-subtitle">পেলভিক হেলথ, রিকভারি ও মানসিক শক্তির জন্য আপনার ব্যক্তিগত সঙ্গী</div>
   <div style="width:100%; margin-bottom:16px;">
@@ -852,7 +852,7 @@
   <div class="topbar">
     <div>
       <div style="display:flex;align-items:center;gap:8px;">
-      <img src="images/logo-0ab19f16.png" alt="" style="width:26px;height:26px;object-fit:contain;flex-shrink:0;">
+      <img src="images/logo-0ab19f16.png" alt="" style="width:38px;height:38px;object-fit:contain;flex-shrink:0;">
       <div class="topbar-title" id="topbar-title">🏠 হোম</div>
     </div>
       <div class="topbar-subtitle" id="topbar-date"></div>
@@ -1738,12 +1738,12 @@
     <!-- Book 2: পবিত্রতার পথে - PREMIUM -->
     <div style="margin:0 16px 14px; border-radius:var(--radius); background:var(--card); border:1px solid rgba(99,102,241,0.4); overflow:hidden;">
       <div style="display:flex; gap:0;">
-        <!-- Cover placeholder -->
-        <div style="width:110px; flex-shrink:0; background:linear-gradient(160deg,#1e1b4b,#312e81); display:flex; align-items:center; justify-content:center; min-height:150px; position:relative;">
-          <div style="text-align:center;">
-            <div style="font-size:38px;">🌿</div>
-          </div>
-          <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(30,27,75,0.9)); padding:6px 8px;">
+        <!-- Cover Image -->
+        <div style="width:110px; flex-shrink:0; position:relative; min-height:150px; overflow:hidden; background:linear-gradient(160deg,#1e1b4b,#312e81);">
+          <img src="images/mastercontrol-01.jpg" alt="পবিত্রতার পথে" loading="lazy"
+            style="width:100%;height:100%;object-fit:cover;display:block;min-height:150px;"
+            onerror="this.style.display='none'">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(30,27,75,0.9));padding:6px 8px;">
             <span class="badge badge-purple" style="font-size:10px;">🔒 প্রিমিয়াম</span>
           </div>
         </div>
@@ -4531,14 +4531,23 @@ function openFlipbookFree(url, title) {
   document.getElementById('flipbook-free-page-counter').textContent = 'মোট ' + pages.length + ' পেজ';
   const container = document.getElementById('fb-free-pages-container');
   container.innerHTML = '';
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (img.dataset.src) { img.src = img.dataset.src; delete img.dataset.src; }
+        observer.unobserve(img);
+      }
+    });
+  }, { rootMargin: '300px' });
   pages.forEach((src, i) => {
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#111;';
+    wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#111;min-height:180px;';
     const pageNum = document.createElement('div');
     pageNum.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);color:#ccc;font-size:10px;padding:2px 8px;border-radius:10px;z-index:2;';
     pageNum.textContent = (i+1) + ' / ' + pages.length;
     const img = document.createElement('img');
-    img.src = src;
+    if (i < 2) { img.src = src; } else { img.dataset.src = src; observer.observe(img); }
     img.draggable = false;
     img.style.cssText = 'width:100%;display:block;-webkit-user-select:none;user-select:none;';
     img.oncontextmenu = () => false;
@@ -4658,12 +4667,11 @@ let fbPreviewTouchX = 0;
 let fbPages = [];
 
 function initFlipbookPages() {
-  // Pages are loaded from MASTERCONTROL_PAGES (full book) / PREVIEW_PAGES (free 5 pages)
-  if (typeof MASTERCONTROL_PAGES !== 'undefined') {
-    // Set book cover in edu screen
+  if (typeof RECOVERY_PAGES !== 'undefined') {
     const coverImg = document.getElementById('recovery-cover-img');
-    if (coverImg) coverImg.src = MASTERCONTROL_PAGES[0];
-    // Set blur preview (a locked page from deeper in the book)
+    if (coverImg) coverImg.src = RECOVERY_PAGES[0];
+  }
+  if (typeof MASTERCONTROL_PAGES !== 'undefined') {
     const blurImg = document.getElementById('fb-blur-img');
     if (blurImg) blurImg.src = MASTERCONTROL_PAGES[14];
   }
@@ -4691,14 +4699,23 @@ function openFlipbook(bookKey) {
   // Build vertical scroll pages
   const container = document.getElementById('fb-pages-container');
   container.innerHTML = '';
+  const lazyObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        if (img.dataset.src) { img.src = img.dataset.src; delete img.dataset.src; }
+        lazyObserver.unobserve(img);
+      }
+    });
+  }, { rootMargin: '300px' });
   fbPages.forEach((src, i) => {
     const wrapper = document.createElement('div');
-    wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#111;';
+    wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;background:#111;min-height:180px;';
     const pageNum = document.createElement('div');
     pageNum.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.65);color:#ccc;font-size:10px;padding:2px 8px;border-radius:10px;z-index:2;';
     pageNum.textContent = (i+1) + ' / ' + fbPages.length;
     const img = document.createElement('img');
-    img.src = src;
+    if (i < 2) { img.src = src; } else { img.dataset.src = src; lazyObserver.observe(img); }
     img.draggable = false;
     img.style.cssText = 'width:100%;display:block;-webkit-user-select:none;user-select:none;';
     img.oncontextmenu = () => false;
