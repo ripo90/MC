@@ -4290,39 +4290,65 @@ function shareJournalEntry(i) {
 }
 function doShare(txt) {
   var FB_GROUP = 'https://www.facebook.com/share/g/19rxS9ubJa/';
-  if(navigator.share){
-    navigator.share({text:txt+'\n\n'+FB_GROUP}).catch(function(){});
+  var fullTxt = txt + '\n\n' + FB_GROUP;
+
+  // Try native share first, fallback to modal
+  if (navigator.share) {
+    navigator.share({ text: fullTxt }).then(function() { return; }).catch(function() {
+      showShareModal(fullTxt, FB_GROUP);
+    });
     return;
   }
-  window._st = txt + '\n\n' + FB_GROUP;
-  var e=document.getElementById('_sm');if(e)e.remove();
-  var m=document.createElement('div');m.id='_sm';
-  m.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);display:flex;align-items:flex-end;justify-content:center;padding:16px;';
-  var bx=document.createElement('div');
-  bx.style.cssText='background:var(--card);border:1px solid var(--border);border-radius:20px 20px 12px 12px;padding:20px;width:100%;max-width:420px;';
-  var h=document.createElement('div');h.style.cssText='font-size:15px;font-weight:800;margin-bottom:12px;';h.textContent='শেয়ার করুন';
-  var ta=document.createElement('textarea');ta.readOnly=true;ta.value=window._st;
-  ta.style.cssText='width:100%;box-sizing:border-box;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:12px;font-family:inherit;resize:none;height:110px;margin-bottom:12px;';
-  var row=document.createElement('div');row.style.cssText='display:flex;gap:8px;';
-  var bc=document.createElement('button');
-  bc.style.cssText='flex:1;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;';
-  bc.textContent='কপি করুন';
-  bc.onclick=function(){navigator.clipboard&&navigator.clipboard.writeText(window._st).then(function(){showToast('কপি হয়েছে!');});};
-  var bw=document.createElement('button');
-  bw.style.cssText='flex:1;padding:12px;background:#075e54;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;';
-  bw.textContent='WhatsApp';
-  bw.onclick=function(){window.open('https://wa.me/?text='+encodeURIComponent(window._st),'_blank');};
-  var bf=document.createElement('button');
-  bf.style.cssText='width:100%;margin-top:8px;padding:12px;background:rgba(24,119,242,0.15);border:1px solid rgba(24,119,242,0.4);border-radius:10px;color:#4a9ff5;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;';
-  bf.textContent='&#55357;&#56421; Facebook গ্রুপে শেয়ার';
-  bf.onclick=function(){window.open(FB_GROUP,'_blank');};
-  var cl=document.createElement('button');
-  cl.style.cssText='width:100%;margin-top:4px;padding:10px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;';
-  cl.textContent='বাতিল';cl.onclick=function(){m.remove();};
-  row.appendChild(bc);row.appendChild(bw);
-  bx.appendChild(h);bx.appendChild(ta);bx.appendChild(row);bx.appendChild(bf);bx.appendChild(cl);
-  m.appendChild(bx);document.body.appendChild(m);
-  m.addEventListener('click',function(ev){if(ev.target===m)m.remove();});
+  showShareModal(fullTxt, FB_GROUP);
+}
+
+function showShareModal(fullTxt, fbLink) {
+  var e = document.getElementById('_sm'); if (e) e.remove();
+  var m = document.createElement('div'); m.id = '_sm';
+  m.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.8);display:flex;align-items:flex-end;justify-content:center;padding:16px;';
+  var bx = document.createElement('div');
+  bx.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:20px 20px 12px 12px;padding:20px;width:100%;max-width:420px;';
+
+  var h = document.createElement('div');
+  h.style.cssText = 'font-size:15px;font-weight:800;margin-bottom:12px;text-align:center;';
+  h.textContent = '📤 শেয়ার করুন';
+
+  var ta = document.createElement('textarea');
+  ta.readOnly = true; ta.value = fullTxt;
+  ta.style.cssText = 'width:100%;box-sizing:border-box;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px;color:var(--text);font-size:12px;font-family:inherit;resize:none;height:100px;margin-bottom:12px;';
+
+  // Copy button
+  var bc = document.createElement('button');
+  bc.style.cssText = 'width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;';
+  bc.textContent = '📋 টেক্সট কপি করুন';
+  bc.onclick = function() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullTxt).then(function() { showToast('✅ কপি হয়েছে! এখন Facebook গ্রুপে পেস্ট করুন।'); });
+    } else {
+      ta.select(); document.execCommand('copy'); showToast('✅ কপি হয়েছে!');
+    }
+  };
+
+  // WhatsApp button
+  var bw = document.createElement('button');
+  bw.style.cssText = 'width:100%;padding:12px;background:#075e54;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;';
+  bw.textContent = '💬 WhatsApp এ শেয়ার';
+  bw.onclick = function() { window.open('https://wa.me/?text=' + encodeURIComponent(fullTxt), '_blank'); };
+
+  // Facebook button
+  var bf = document.createElement('button');
+  bf.style.cssText = 'width:100%;padding:12px;background:rgba(24,119,242,0.2);border:1px solid rgba(24,119,242,0.5);border-radius:10px;color:#4a9ff5;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px;';
+  bf.textContent = '👥 Facebook গ্রুপে যান';
+  bf.onclick = function() { window.open(fbLink, '_blank'); };
+
+  // Cancel
+  var cl = document.createElement('button');
+  cl.style.cssText = 'width:100%;padding:10px;background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;font-family:inherit;';
+  cl.textContent = 'বাতিল'; cl.onclick = function() { m.remove(); };
+
+  bx.appendChild(h); bx.appendChild(ta); bx.appendChild(bc); bx.appendChild(bw); bx.appendChild(bf); bx.appendChild(cl);
+  m.appendChild(bx); document.body.appendChild(m);
+  m.addEventListener('click', function(ev) { if (ev.target === m) m.remove(); });
 }
 function saveJournal() {
   const text = document.getElementById('journal-text').value.trim();
